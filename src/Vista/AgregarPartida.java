@@ -1,5 +1,6 @@
 package Vista;
 
+import Modelo.Conexion;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -13,12 +14,15 @@ import javax.swing.table.DefaultTableModel;
 
 public class AgregarPartida extends javax.swing.JFrame {
 
-    boolean Encabezado = false;
-    boolean nPartida = false;
-    int i = 0;
+    boolean Encabezado = false; //Nos servira para insertar el encabezado una sola vez
+    boolean nPartida = false; //No se aun
+    int UltimaDebe = 1;       //nos servira para saber en donde ir insertando en el debe
+    int i = 0;                //Contador para no se que
 
     public AgregarPartida() {
         initComponents();
+        
+        //Inicializa los distintos grupos de opciones para que funcionen correctamente
         Grupo_botones_DH.add(btn_debe);
         Grupo_botones_DH.add(btn_haber);
         GrupoBotonesIVA.add(btnMasIVA);
@@ -26,7 +30,8 @@ public class AgregarPartida extends javax.swing.JFrame {
         GrupoBotonesIVA.add(btnExento);
         grupoBotonesDC.add(btnCFI);
         grupoBotonesDC.add(btnDFI);
-        cargarLista();
+        
+        cargarLista();    //Carga todas las cuentas en un comboBox
     }
 
     @SuppressWarnings("unchecked")
@@ -253,8 +258,8 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     private void btnAgregarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCuentaActionPerformed
 
-        preview();
-        sumar();
+        preview(); //Funcion que permite una vista previa de la partida, se llama cada vez que se agrega una cuenta
+        sumar();   //Hace la sumatoria del debe y haber, pa ver si cuadra
         
 
     }//GEN-LAST:event_btnAgregarCuentaActionPerformed
@@ -297,18 +302,25 @@ public class AgregarPartida extends javax.swing.JFrame {
     public void cargarLista() {
 
         try {
-            Connection con = null;
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/sistema_contable", "root", "");
+            //Nueva conexion
+            Conexion conecta = new Conexion();
+            Connection con = conecta.getConexion();
+  
+            //creamos un estado de conexion
             Statement st = con.createStatement();
+            //Con dicho estado ejectuamos un query y capturamos los resultados en rs
             ResultSet rs = st.executeQuery("SELECT * FROM `cuenta`;");
+            
+            //removemos todo del combo box
             cbxLista.removeAllItems();
+            
+            //mientras halla otro dato en rs, añadimos a la combo box un resultado
             while (rs.next()) {
                 cbxLista.addItem(rs.getString(8));
             }
+            //cerramos la conexion cerrando el resultado obtenido
             rs.close();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+            
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -317,12 +329,26 @@ public class AgregarPartida extends javax.swing.JFrame {
     public void sumar() {
         double t = 0;
         double p = 0;
+        
+        //mientas la tabla tenga mas de un dato
         if (tablePartidaPreview.getRowCount() > 0) {
+            
             for (int i = 0; i < tablePartidaPreview.getRowCount(); i++) {
                 if (!tablePartidaPreview.getValueAt(i, 2).toString().isEmpty()) {
+                    
                     p = Double.parseDouble(tablePartidaPreview.getValueAt(i, 2).toString());
                     t += p;
+                    
+                    if(i<tablePartidaPreview.getRowCount()-1){
+                        
+                    if(tablePartidaPreview.getValueAt(i+1, 2).toString().isEmpty()){ //si la siguiente celda esta vacia
+                    this.UltimaDebe = i+1; //entonces esta es la ultima cuenta del debe
+                    }
+                    
+                    }
+                    
                 }
+                
             }
             txtTotalDebe.setText(String.valueOf(t));
         }
@@ -339,66 +365,116 @@ public class AgregarPartida extends javax.swing.JFrame {
             txtTotalHaber.setText(String.valueOf(t1));
         }
     }
-
+    
+    public void InsertarFila(DefaultTableModel mod, int fila, Object[] objeto, boolean Final){ //Funcion que inserta fila en cualquier parte
+    
+    if(Final){
+    
+        mod.addRow(objeto);
+        
+    }else{
+        
+        mod.insertRow(fila, objeto);
+        
+    }
+    
+    }
+    
     public void preview() {
+        
+        //Validacion de todos los datos
         if ((!txtNPartida.getText().toString().isEmpty()) && (!txtFecha.getText().toString().isEmpty()) && (!txtSaldo.getText().toString().isEmpty())) {
             i++;
-            DecimalFormat formato = new DecimalFormat("#.00");
+            DecimalFormat formato = new DecimalFormat("#,00");
             DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
 
             if (!Encabezado) {
-                _Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
+                //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
+                InsertarFila(_Modelo,0,new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""},true);
                 Encabezado = true;
-                nPartida = true;
+                nPartida = true; //confirmamos que hay una partida en existencia
+                
+                //Agregamos un encabezado si este existe
+                
             } else {
+                //Aca ya habremos insertado un encabezado y un concepto antes, en tal caso
+                //eliminamos la ultima fila del concepto de partida para insertarlo mas abajo
                 _Modelo.removeRow(_Modelo.getRowCount() - 1);
             }
 
-            if (btn_debe.isSelected()) {
+            if (btn_debe.isSelected()) {      //------Para una cuenta en el Debe---------
                 if (btnMasIVA.isSelected()) {
-                    if (btnDFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
-                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
+                    
+                    if (btnDFI.isSelected()) { //en caso de que halla debito Fiscal
+                        //agregamos la cuenta objetivo MAS el respectivo Debito
+                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});                        
+                        _Modelo.insertRow(this.UltimaDebe+1, new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
+                                                   
                     } else if (btnCFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
-                        _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
+                        //agregamos la cuenta objetivo MAS el respectivo Credito
+                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
+                        _Modelo.insertRow(this.UltimaDebe+1, new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
                     }
-                } else if (btnExento.isSelected()) {
-                    _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), ""});
-                } else if (btnIncluido.isSelected()) {
+                    
+                } else if (btnExento.isSelected()) { //Si esta exento de iva (por defecto) solo añadimos la cuenta objetivo
+                    _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), ""});
+                
+                } else if (btnIncluido.isSelected()) { //Para iva INcluido
+                    
                     if (btnDFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
-                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
+                         //Exluimos del saldo lo que va hacia el IVA y lo que va hacia la cuenta objetivo
+                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
+                        _Modelo.insertRow(this.UltimaDebe+1, new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
+                    
                     } else if (btnCFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
-                        _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
+                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
+                        _Modelo.insertRow(this.UltimaDebe+1, new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
                     }
                 }
 
-            } else if (btn_haber.isSelected()) {
+            } else if (btn_haber.isSelected()) { //--------Para una Cuenta en el Haber---------
+                
+                //Iva no incluido
                 if (btnMasIVA.isSelected()) {
+                    
                     if (btnDFI.isSelected()) {
+                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", txtSaldo.getText()});
-                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
+                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});                  
+                    
                     } else if (btnCFI.isSelected()) {
+                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", txtSaldo.getText()});
                         _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
+                    
                     }
+                 
+                //Exento de Iva
                 } else if (btnExento.isSelected()) {
+                    
                     _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText())))});
+                
+                //Iva Incluido
                 } else if (btnIncluido.isSelected()) {
+                    
                     if (btnDFI.isSelected()) {
+                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
                         _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
+                   
                     } else if (btnCFI.isSelected()) {
+                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
                         _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
+                    
                     }
                 }
             }
-
+            
+            //Al final de todo agregamos el concepto de la partida
             _Modelo.addRow(new Object[]{"", txtConcepto.getText(), "", ""});
-        } else {
+            
+        } else { //Validacion de campos
             JOptionPane.showMessageDialog(null, "TODOS LOS CAMPOS SON REQUERIDOS");
         }
     }
