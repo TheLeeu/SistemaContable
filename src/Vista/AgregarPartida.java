@@ -27,7 +27,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         GrupoBotonesIVA.add(btnExento);
         grupoBotonesDC.add(btnCFI);
         grupoBotonesDC.add(btnDFI);
-        cargarLista();//Carga todas las cuentas en un comboBox
+        cargarLista("SELECT * FROM `cuenta`;");//Carga todas las cuentas en un comboBox
     }
 
     @SuppressWarnings("unchecked")
@@ -139,6 +139,12 @@ public class AgregarPartida extends javax.swing.JFrame {
         );
 
         jLabel5.setText("Seleccionar cuenta");
+
+        jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTextField3KeyTyped(evt);
+            }
+        });
 
         jLabel6.setText("Saldo");
 
@@ -301,6 +307,13 @@ public class AgregarPartida extends javax.swing.JFrame {
         SoloNumeros(evt);//valida que solo se ingresen numeros
     }//GEN-LAST:event_txtSaldoKeyTyped
 
+    private void jTextField3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyTyped
+        
+        cbxLista.setPopupVisible(true);
+        cargarLista("SELECT * FROM `cuenta` WHERE `nombre_cuenta` LIKE '"+jTextField3.getText()+"%';");
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField3KeyTyped
+
     /**
      * @param args the command line arguments
      */
@@ -337,7 +350,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         });
     }
 
-    public void cargarLista() {
+    public void cargarLista(String query) {
 
         try {
             //Nueva conexion
@@ -347,7 +360,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             //creamos un estado de conexion
             Statement st = con.createStatement();
             //Con dicho estado ejectuamos un query y capturamos los resultados en rs
-            ResultSet rs = st.executeQuery("SELECT * FROM `cuenta`;");
+            ResultSet rs = st.executeQuery(query);
             
             //removemos todo del combo box
             cbxLista.removeAllItems();
