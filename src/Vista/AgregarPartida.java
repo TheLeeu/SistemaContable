@@ -14,14 +14,11 @@ import javax.swing.table.DefaultTableModel;
 
 public class AgregarPartida extends javax.swing.JFrame {
 
-    boolean Encabezado = false; //Nos servira para insertar el encabezado una sola vez
-    boolean nPartida = false; //No se aun
-    int UltimaDebe = 1;       //nos servira para saber en donde ir insertando en el debe
-    int i = 0;                //Contador para no se que
+    boolean Encabezado = false;//Nos servira para insertar el encabezado una sola vez
+    int UltimaDebe = 1;//nos servira para saber en donde ir insertando en el debe
 
     public AgregarPartida() {
         initComponents();
-        
         //Inicializa los distintos grupos de opciones para que funcionen correctamente
         Grupo_botones_DH.add(btn_debe);
         Grupo_botones_DH.add(btn_haber);
@@ -30,8 +27,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         GrupoBotonesIVA.add(btnExento);
         grupoBotonesDC.add(btnCFI);
         grupoBotonesDC.add(btnDFI);
-        
-        cargarLista();    //Carga todas las cuentas en un comboBox
+        cargarLista();//Carga todas las cuentas en un comboBox
     }
 
     @SuppressWarnings("unchecked")
@@ -73,6 +69,12 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("N. Partida");
+
+        txtNPartida.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtNPartidaKeyTyped(evt);
+            }
+        });
 
         jLabel2.setText("Fecha");
 
@@ -140,6 +142,12 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         jLabel6.setText("Saldo");
 
+        txtSaldo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtSaldoKeyTyped(evt);
+            }
+        });
+
         btn_debe.setText("Debe");
 
         btn_haber.setText("Haber");
@@ -147,8 +155,18 @@ public class AgregarPartida extends javax.swing.JFrame {
         IVA.setText("IVA");
 
         btnMasIVA.setText("+ IVA");
+        btnMasIVA.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnMasIVAMouseClicked(evt);
+            }
+        });
 
         btnIncluido.setText("Incluido");
+        btnIncluido.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnIncluidoMouseClicked(evt);
+            }
+        });
 
         btnExento.setText("Exento");
 
@@ -258,11 +276,30 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     private void btnAgregarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCuentaActionPerformed
 
-        preview(); //Funcion que permite una vista previa de la partida, se llama cada vez que se agrega una cuenta
-        sumar();   //Hace la sumatoria del debe y haber, pa ver si cuadra
-        
+        preview();//Funcion que permite una vista previa de la partida, se llama cada vez que se agrega una cuenta
+        sumar();   //Hace la sumatoria del debe y haber, para ver si cuadra
+
 
     }//GEN-LAST:event_btnAgregarCuentaActionPerformed
+// los dos siguientes eventos son cuando se selecciona el botn de IVA incluido o mas IVA
+    private void btnMasIVAMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMasIVAMouseClicked
+        btnDFI.setSelected(true);//que seleccione el boton DFI
+    }//GEN-LAST:event_btnMasIVAMouseClicked
+
+    private void btnIncluidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnIncluidoMouseClicked
+        btnDFI.setSelected(true);//que seleccione el boton DFI
+    }//GEN-LAST:event_btnIncluidoMouseClicked
+
+    
+    
+    // Para validar que lo que se escriba en el jtext de numero de partida sea solo numeros
+    private void txtNPartidaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNPartidaKeyTyped
+        SoloNumeros(evt);//valida que solo se ingresen numeros
+    }//GEN-LAST:event_txtNPartidaKeyTyped
+
+    private void txtSaldoKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSaldoKeyTyped
+        SoloNumeros(evt);//valida que solo se ingresen numeros
+    }//GEN-LAST:event_txtSaldoKeyTyped
 
     /**
      * @param args the command line arguments
@@ -289,6 +326,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(AgregarPartida.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
@@ -329,13 +367,10 @@ public class AgregarPartida extends javax.swing.JFrame {
     public void sumar() {
         double t = 0;
         double p = 0;
-        
-        //mientas la tabla tenga mas de un dato
+        //mientras la tabla tenga mas de un dato
         if (tablePartidaPreview.getRowCount() > 0) {
-            
             for (int i = 0; i < tablePartidaPreview.getRowCount(); i++) {
                 if (!tablePartidaPreview.getValueAt(i, 2).toString().isEmpty()) {
-                    
                     p = Double.parseDouble(tablePartidaPreview.getValueAt(i, 2).toString());
                     t += p;
                     
@@ -347,8 +382,8 @@ public class AgregarPartida extends javax.swing.JFrame {
                     
                     }
                     
+                    
                 }
-                
             }
             txtTotalDebe.setText(String.valueOf(t));
         }
@@ -365,44 +400,27 @@ public class AgregarPartida extends javax.swing.JFrame {
             txtTotalHaber.setText(String.valueOf(t1));
         }
     }
-    
-    public void InsertarFila(DefaultTableModel mod, int fila, Object[] objeto, boolean Final){ //Funcion que inserta fila en cualquier parte
-    
-    if(Final){
-    
-        mod.addRow(objeto);
-        
-    }else{
-        
-        mod.insertRow(fila, objeto);
-        
-    }
-    
-    }
-    
+
     public void preview() {
-        
-        //Validacion de todos los datos
-        if ((!txtNPartida.getText().toString().isEmpty()) && (!txtFecha.getText().toString().isEmpty()) && (!txtSaldo.getText().toString().isEmpty())) {
-            i++;
-            DecimalFormat formato = new DecimalFormat("#,00");
+        boolean DH_seleccionado = false;//nos servira para ver que los botones esten seleccionados
+        //para ver que el boton debe o haber sea seleccionado
+        if(btn_debe.isSelected() || btn_haber.isSelected())
+        {
+            DH_seleccionado = true;
+        }
+        if ((!txtNPartida.getText().toString().isEmpty()) && (!txtFecha.getText().toString().isEmpty()) && (!txtSaldo.getText().toString().isEmpty())  && (DH_seleccionado)) {
+            DecimalFormat formato = new DecimalFormat("#.00");
             DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
 
             if (!Encabezado) {
                 //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
-                InsertarFila(_Modelo,0,new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""},true);
+                InsertarFila(_Modelo, 0, new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""}, true);
                 Encabezado = true;
-                nPartida = true; //confirmamos que hay una partida en existencia
-                
-                //Agregamos un encabezado si este existe
-                
             } else {
-                //Aca ya habremos insertado un encabezado y un concepto antes, en tal caso
-                //eliminamos la ultima fila del concepto de partida para insertarlo mas abajo
                 _Modelo.removeRow(_Modelo.getRowCount() - 1);
             }
 
-            if (btn_debe.isSelected()) {      //------Para una cuenta en el Debe---------
+            if (btn_debe.isSelected()) {
                 if (btnMasIVA.isSelected()) {
                     
                     if (btnDFI.isSelected()) { //en caso de que halla debito Fiscal
@@ -432,50 +450,59 @@ public class AgregarPartida extends javax.swing.JFrame {
                     }
                 }
 
-            } else if (btn_haber.isSelected()) { //--------Para una Cuenta en el Haber---------
-                
-                //Iva no incluido
+            } else if (btn_haber.isSelected()) {
                 if (btnMasIVA.isSelected()) {
-                    
                     if (btnDFI.isSelected()) {
-                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", txtSaldo.getText()});
-                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});                  
-                    
+                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
                     } else if (btnCFI.isSelected()) {
-                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", txtSaldo.getText()});
                         _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
-                    
                     }
-                 
-                //Exento de Iva
                 } else if (btnExento.isSelected()) {
-                    
                     _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText())))});
-                
-                //Iva Incluido
                 } else if (btnIncluido.isSelected()) {
-                    
                     if (btnDFI.isSelected()) {
-                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
                         _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
-                   
                     } else if (btnCFI.isSelected()) {
-                        
                         _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
                         _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
-                    
                     }
                 }
             }
-            
-            //Al final de todo agregamos el concepto de la partida
+
             _Modelo.addRow(new Object[]{"", txtConcepto.getText(), "", ""});
-            
-        } else { //Validacion de campos
+        } else {
             JOptionPane.showMessageDialog(null, "TODOS LOS CAMPOS SON REQUERIDOS");
+        }
+    }
+
+    public void InsertarFila(DefaultTableModel mod, int fila, Object[] objeto, boolean Final) { //Funcion que inserta fila en cualquier parte
+
+        if (Final) {
+
+            mod.addRow(objeto);
+
+        } else {
+
+            mod.insertRow(fila, objeto);
+
+        }
+
+    }
+    
+    
+    //valida que solo se ingresen numero a un jtext y recibe una variable de tipo evento
+    public void SoloNumeros(java.awt.event.KeyEvent evt){
+        char validar = evt.getKeyChar();//obtiene el caracter de la tecla que presiona el usuario
+        //si lo que el usuario a escrito es una letra
+        if(Character.isLetter(validar))
+        {
+            getToolkit().beep();//suena
+            evt.consume();//no se para que es
+            
+            JOptionPane.showMessageDialog(rootPane, "Ingresar solo numeros");//le decimos que solo ingrese numeros
         }
     }
 
@@ -488,7 +515,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     public javax.swing.JButton btnAgregarCuenta;
     private javax.swing.JRadioButton btnCFI;
     private javax.swing.JRadioButton btnDFI;
-    private javax.swing.JRadioButton btnExento;
+    public javax.swing.JRadioButton btnExento;
     private javax.swing.JRadioButton btnIncluido;
     private javax.swing.JRadioButton btnMasIVA;
     private javax.swing.JRadioButton btn_debe;

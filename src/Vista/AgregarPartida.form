@@ -164,6 +164,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtNPartida">
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtNPartidaKeyTyped"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
@@ -335,6 +338,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="txtSaldo">
+      <Events>
+        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtSaldoKeyTyped"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="btn_debe">
       <Properties>
@@ -355,16 +361,25 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="+ IVA"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnMasIVAMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="btnIncluido">
       <Properties>
         <Property name="text" type="java.lang.String" value="Incluido"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnIncluidoMouseClicked"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="btnExento">
       <Properties>
         <Property name="text" type="java.lang.String" value="Exento"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JRadioButton" name="btnDFI">
       <Properties>

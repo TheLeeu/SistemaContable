@@ -293,6 +293,7 @@ public class Principal extends javax.swing.JFrame {
     private void btnAgregarPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarPartidaActionPerformed
         agregarPartida.setVisible(true);
         agregarPartida.setLocationRelativeTo(null);
+        agregarPartida.btnExento.setSelected(true);
     }//GEN-LAST:event_btnAgregarPartidaActionPerformed
 
     /**
@@ -320,6 +321,8 @@ public class Principal extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Principal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
