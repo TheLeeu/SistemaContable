@@ -291,9 +291,12 @@ public class Principal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
     
     private void btnAgregarPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarPartidaActionPerformed
+        
         agregarPartida.setVisible(true);
         agregarPartida.setLocationRelativeTo(null);
         agregarPartida.btnExento.setSelected(true);
+        agregarPartida.setDefaultCloseOperation(agregarPartida.DISPOSE_ON_CLOSE);
+        
     }//GEN-LAST:event_btnAgregarPartidaActionPerformed
 
     /**
