@@ -12,7 +12,8 @@ import javax.swing.table.DefaultTableModel;
 
 public class AgregarPartida extends javax.swing.JFrame {
 
-    boolean Encabezado = false;//Nos servira para insertar el encabezado una sola vez
+    boolean Encabezado = false;//Nos servira para insertar el encabezado si no esta
+    boolean Concepto = true;
     int UltimaDebe = 1;//nos servira para saber en donde ir insertando en el debe
 
     public AgregarPartida() {
@@ -356,7 +357,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
        
-    eliminar();
+    eliminar(false);
     btn_eliminar.setEnabled(false);
         
     // TODO add your handling code here:
@@ -375,10 +376,12 @@ public class AgregarPartida extends javax.swing.JFrame {
             insertarPartida();
             JOptionPane.showMessageDialog(rootPane, "Partida ingresada correctamente a la base de datos");
              
-            this.setVisible(false);         
+            this.cargarNPartida();
+            this.cargarLista("SELECT * FROM `cuenta`;");
+            eliminar(true);
+            
+            this.setVisible(false);
             this.dispose();
-            
-            
             
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
@@ -424,7 +427,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         });
     }
 
-    private void cargarLista(String query) {
+    public void cargarLista(String query) {
 
         try {
             //Nueva conexion
@@ -451,7 +454,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         double t = 0;
         double p = 0;
         //mientras la tabla tenga mas de un dato
-        if (tablePartidaPreview.getRowCount() > 0) {
+        if (tablePartidaPreview.getRowCount() > 1) {
             for (int i = 0; i < tablePartidaPreview.getRowCount(); i++) {
                 if (!tablePartidaPreview.getValueAt(i, 2).toString().isEmpty()) {
                     p = Double.parseDouble(tablePartidaPreview.getValueAt(i, 2).toString());
@@ -469,11 +472,11 @@ public class AgregarPartida extends javax.swing.JFrame {
                 }
             }
             txtTotalDebe.setText(String.valueOf(t));
-        }
+        }else{this.UltimaDebe = 1;}
 
         double t1 = 0;
         double p1 = 0;
-        if (tablePartidaPreview.getRowCount() > 0) {
+        if (tablePartidaPreview.getRowCount() > 1) {
             for (int i = 0; i < tablePartidaPreview.getRowCount(); i++) {
                 if (!tablePartidaPreview.getValueAt(i, 3).toString().isEmpty()) {
                     p1 = Double.parseDouble(tablePartidaPreview.getValueAt(i, 3).toString());
@@ -482,21 +485,37 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
             txtTotalHaber.setText(String.valueOf(t1));
         }
+        
+        
     }
     
-    public void eliminar(){
+    public void eliminar(boolean all){
     
        DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
         
-       int Filas[];
+       int Filas[] = {};
        
-       Filas = tablePartidaPreview.getSelectedRows();
+       if(all){
+           
+           int[] aux = new int[_Modelo.getRowCount()];
+           
+           for(int i = 0; i < _Modelo.getRowCount();i++) aux[i] = i;
+           
+           Filas = aux;
+           
+       }
+       else{ Filas = tablePartidaPreview.getSelectedRows(); }
        
-       for(int i = Filas[0]; i <= Filas[Filas.length-1]; i++){ //desde el primer dato hasta el ultimo
+       for(int i = Filas[Filas.length-1]; i >= Filas[0]; i--){ //desde el ultimo dato hasta el primero
        
        _Modelo.removeRow(i);
        
        }
+       
+       //if(!_Modelo.getValueAt(0, 1).toString().contains("Partida")){Encabezado=false;}
+       //if(!_Modelo.getValueAt(_Modelo.getRowCount()-1, 1).toString().contains("Hola")){Concepto=false;}
+       
+       sumar();
        
     }
     
@@ -511,11 +530,11 @@ public class AgregarPartida extends javax.swing.JFrame {
             DecimalFormat formato = new DecimalFormat("#,00");
             DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
 
-            if (!Encabezado) {
+            if (tablePartidaPreview.getRowCount()==0 || !Encabezado) {
                 //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
                 _Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
                 Encabezado = true;
-            } else {
+            } else if(Concepto){
                 _Modelo.removeRow(_Modelo.getRowCount() - 1);
             }
 

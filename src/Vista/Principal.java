@@ -293,6 +293,9 @@ public class Principal extends javax.swing.JFrame {
     private void btnAgregarPartidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarPartidaActionPerformed
         
         agregarPartida.setVisible(true);
+        //agregarPartida.cargarNPartida();
+        //agregarPartida.cargarLista("SELECT * FROM `cuenta`;");
+        //agregarPartida.eliminar(true);
         agregarPartida.setLocationRelativeTo(null);
         agregarPartida.btnExento.setSelected(true);
         agregarPartida.setDefaultCloseOperation(agregarPartida.DISPOSE_ON_CLOSE);
