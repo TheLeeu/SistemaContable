@@ -422,7 +422,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             
             //mientras halla otro dato en rs, añadimos a la combo box un resultado
             while (rs.next()) {
-                cbxLista.addItem(rs.getString(8));
+                cbxLista.addItem(rs.getString(4));
             }
             //cerramos la conexion cerrando el resultado obtenido
             rs.close();
@@ -579,6 +579,8 @@ public class AgregarPartida extends javax.swing.JFrame {
         DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
         Conexion ConInsertar = new Conexion();
         
+        /*-------------Obtencion de datos de la partida------------*/
+        
         ResultSet rs = ConInsertar.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ");
         
         String IdAnt = null;
@@ -603,18 +605,35 @@ public class AgregarPartida extends javax.swing.JFrame {
         }
         
         String datos[][] = datosTabla(_Modelo);
-              
-        rs.close();// cerramos el conjunto de resultados para poder usarlo despues                          
         
-        System.out.println(IdAnt+"   "+Id);
-        
+       /*--------------Obtencion de cuentas-------------*/  //ya tengo idpartida
+       
+       String IdCuenta = null;                         
+
         String Fecha = datos[0][0];
         String Concepto = datos[tablePartidaPreview.getRowCount()-1][1];
         System.out.println("Fecha: "+Fecha+"      Concepto: "+Concepto);
         
         ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`) VALUES ("+Id+",'"+Fecha+"','"+Concepto+"')");
         
-        
+       for(int i = 1; i < tablePartidaPreview.getRowCount()-1;i++){
+       
+       rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '"+datos[i][1]+"'");   
+       while (rs.next()) {//mientras tenga registros que haga lo siguiente
+                     IdCuenta = rs.getString(1);
+                     System.out.println(IdCuenta);
+       }
+       
+       if(datos[i][2].isEmpty())datos[i][2]="0";
+       if(datos[i][3].isEmpty())datos[i][3]="0";
+       
+       ConInsertar.Ejecutar(
+       "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
+       + "VALUES (NULL, '"+IdCuenta+"', '"+Id+"', '"+datos[i][2]+"', '"+datos[i][3]+"');");
+       
+       }
+       
+       rs.close();// cerramos el conjunto de resultados para poder usarlo despues 
 
     }
     
