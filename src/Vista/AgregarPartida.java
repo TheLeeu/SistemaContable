@@ -64,12 +64,14 @@ public class AgregarPartida extends javax.swing.JFrame {
         btnCFI = new javax.swing.JRadioButton();
         btnAgregarCuenta = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel1.setText("N. Partida");
 
+        txtNPartida.setText("1");
         txtNPartida.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtNPartidaKeyTyped(evt);
@@ -78,10 +80,13 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         jLabel2.setText("Fecha");
 
+        txtFecha.setText("2010-10-02");
+
         jLabel3.setText("Concepto");
 
         txtConcepto.setColumns(20);
         txtConcepto.setRows(5);
+        txtConcepto.setText("Hola");
         jScrollPane1.setViewportView(txtConcepto);
 
         tablePartidaPreview.setModel(new javax.swing.table.DefaultTableModel(
@@ -140,12 +145,14 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         jLabel6.setText("Saldo");
 
+        txtSaldo.setText("2000");
         txtSaldo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtSaldoKeyTyped(evt);
             }
         });
 
+        btn_debe.setSelected(true);
         btn_debe.setText("Debe");
 
         btn_haber.setText("Haber");
@@ -181,6 +188,13 @@ public class AgregarPartida extends javax.swing.JFrame {
         btn_eliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_eliminarActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Insertar a BD");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
             }
         });
 
@@ -224,6 +238,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(btn_haber)))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnAgregarCuenta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btn_eliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                         .addGap(18, 18, 18)
@@ -287,7 +302,10 @@ public class AgregarPartida extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_eliminar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btn_eliminar)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(Panel_aggCuentas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -345,6 +363,16 @@ public class AgregarPartida extends javax.swing.JFrame {
 // TODO add your handling code here:
     }//GEN-LAST:event_tablePartidaPreviewMouseClicked
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    
+        try {
+            insertarPartida();
+// TODO add your handling code here:
+        } catch (SQLException ex) {
+            Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -386,12 +414,8 @@ public class AgregarPartida extends javax.swing.JFrame {
         try {
             //Nueva conexion
             Conexion conecta = new Conexion();
-            Connection con = conecta.getConexion();
-  
-            //creamos un estado de conexion
-            Statement st = con.createStatement();
-            //Con dicho estado ejectuamos un query y capturamos los resultados en rs
-            ResultSet rs = st.executeQuery(query);
+            ResultSet rs;
+            rs = conecta.Consulta(query);
             
             //removemos todo del combo box
             cbxLista.removeAllItems();
@@ -474,7 +498,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
             if (!Encabezado) {
                 //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
-                InsertarFila(_Modelo, 0, new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""}, true);
+                _Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
                 Encabezado = true;
             } else {
                 _Modelo.removeRow(_Modelo.getRowCount() - 1);
@@ -538,17 +562,59 @@ public class AgregarPartida extends javax.swing.JFrame {
         }
     }
 
-    public void InsertarFila(DefaultTableModel mod, int fila, Object[] objeto, boolean Final) { //Funcion que inserta fila en cualquier parte
+    public String[][] datosTabla (DefaultTableModel table) {
+    int nRow = table.getRowCount(), nCol = table.getColumnCount();
+    String[][] tableData = new String[nRow][nCol];
+    for (int i = 0 ; i < nRow ; i++)
+        for (int j = 0 ; j < nCol ; j++){
+            tableData[i][j] = table.getValueAt(i,j).toString();
+            System.out.println(tableData[i][j]+"("+i+","+j+")");            
+        }
+    return tableData;
+}
+    
+    public void insertarPartida() throws SQLException { //Funcion que inserta una partida con sus respectivas cuentas en la BD
 
-        if (Final) {
+        System.out.println("llegue aca");
+        DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
+        Conexion ConInsertar = new Conexion();
+        
+        ResultSet rs = ConInsertar.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ");
+        
+        String IdAnt = null;
+        String Id;
+        
+        if(rs.first()){//recorre el resultset al siguiente registro si es que existen
 
-            mod.addRow(objeto);
+            rs.beforeFirst();//regresa el puntero al primer registro
 
-        } else {
+                while (rs.next()) {//mientras tenga registros que haga lo siguiente
 
-            mod.insertRow(fila, objeto);
+                     IdAnt = rs.getString(1);
+
+                }
+            Id = String.valueOf(Integer.parseInt(IdAnt)+1); //en caso de haber, sumamos 1
 
         }
+        else{
+
+             Id = "1";//esta vacio el resultset
+
+        }
+        
+        String datos[][] = datosTabla(_Modelo);
+              
+        rs.close();// cerramos el conjunto de resultados para poder usarlo despues                          
+        
+        System.out.println(IdAnt+"   "+Id);
+        
+        String Fecha = datos[0][0];
+        String Concepto = datos[tablePartidaPreview.getRowCount()-1][1];
+        System.out.println("Fecha: "+Fecha+"      Concepto: "+Concepto);
+        
+        ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`) VALUES ("+Id+",'"+Fecha+"','"+Concepto+"')");
+        
+        
 
     }
     
@@ -582,6 +648,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     private javax.swing.JRadioButton btn_haber;
     public javax.swing.JComboBox cbxLista;
     private javax.swing.ButtonGroup grupoBotonesDC;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
