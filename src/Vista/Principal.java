@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -97,6 +100,11 @@ public class Principal extends javax.swing.JFrame {
         });
 
         jButton3.setText("AJUSTE DE IVA");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         btnModificar.setText("Modificar");
 
@@ -329,7 +337,6 @@ public class Principal extends javax.swing.JFrame {
         //agregarPartida.cargarLista("SELECT * FROM `cuenta`;");
         //agregarPartida.eliminar(true);
         agregarPartida.setLocationRelativeTo(null);
-        agregarPartida.btnExento.setSelected(true);
         agregarPartida.setDefaultCloseOperation(agregarPartida.DISPOSE_ON_CLOSE);
         CargandoPartidas();
 
@@ -368,6 +375,10 @@ public class Principal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        AjusteIVA();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -405,8 +416,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
     }
-
-    
 
     public void CargandoPartidas() {
         DefaultTableModel modelo = (DefaultTableModel) TableMostrarPartidas.getModel();
@@ -494,15 +503,17 @@ public class Principal extends javax.swing.JFrame {
     public void ModificarId(int id_partida) {
         int habian = CuantosIdP() + 1;//almacena cuantos id habian antes de eliminar uno
         int VoyAmodificar = habian - id_partida;/*Esta variable recibe el numero de id que voy a modificar, la uso para
-                                                  contar los ciclos que tendra el while de abajo*/
+         contar los ciclos que tendra el while de abajo*/
+
         int a = 1; //contador para el ciclo while
-        
+
         int modifica = id_partida + 1;/*esta variable recibe el id que voy a modificar en la base de datos, y como voy a 
-                                        modificar el siguiente id despues del que elimine le sumo 1, ejemplo:
-                                        si elimine el 2 voy a modificar el 3*/
+         modificar el siguiente id despues del que elimine le sumo 1, ejemplo:
+         si elimine el 2 voy a modificar el 3*/
+
         int nuevo = id_partida;/*esta variable recibe el nuevo id, y como sustituire el que elimine le paso ese valor*/
-        
-        while(a<=VoyAmodificar){
+
+        while (a <= VoyAmodificar) {
             Conexion con = new Conexion();
             PreparedStatement ps = null;
             Connection conn = con.getConexion();
@@ -513,14 +524,14 @@ public class Principal extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             modifica++;
             nuevo++;
             a++;
         }
- 
+
     }
-    
+
     /*Esta funcion retorna cuantos registros hay en la base de datos de la tabla partida y devuelve ese valor*/
     public int CuantosIdP() {
         int n = 0;//variable que retorna el valor
@@ -531,7 +542,7 @@ public class Principal extends javax.swing.JFrame {
         try {
             ps = conn.prepareStatement("SELECT COUNT(*) FROM `partida` ");
             rs = ps.executeQuery();
-            if(rs.next()){
+            if (rs.next()) {
                 n = Integer.parseInt(rs.getString("COUNT(*)"));
             }
             ps.close();
@@ -540,6 +551,109 @@ public class Principal extends javax.swing.JFrame {
         }
         return n;
     }
+
+    public void AjusteIVA() {
+        //primero hay que recorrer las cuentas en busca de DFI o CFI
+        int nFilas = TableMostrarPartidas.getRowCount();//obtenemos el numero total de filas en la tabla
+        Double debitoD = 0.0;
+        Double debitoH = 0.0;
+        Double creditoD = 0.0;
+        Double creditoH = 0.0;
+        Double totalC = 0.0;
+        Double totalD = 0.0;
+        boolean IVAremanente = false;
+        boolean IVAimpuesto = false;
+        for (int i = 0; i < nFilas; i++) {
+            /*dentro de este for vamos a tomar los valores del DFI/CFI y separar respectivamente si esta en el debe o haber*/
+            if (TableMostrarPartidas.getValueAt(i, 1).toString().equals("Debito Fiscal IVA")) {
+                debitoD += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 2).toString());
+                debitoH += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
+            } else if (TableMostrarPartidas.getValueAt(i, 1).toString().equals("Credito Fiscal IVA")) {
+                creditoD += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 2).toString());
+                creditoH += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
+            }
+        }
+
+        //ahora vamos a realizar las T para el DFI y CFI
+        
+        if (debitoD > debitoH) {
+            totalD = debitoD - debitoH;
+        } else if (debitoD < debitoH) {
+            totalD = debitoH - debitoD;
+        }
+        
+        if (creditoD > creditoH) {
+            totalC = creditoD - creditoH;
+        } else if (creditoD < creditoH) {
+            totalC = creditoH - creditoD;
+        }
+
+        //hacemos el ajuste de iva
+        Double remanente = 0.0;
+        Double impuesto = 0.0;
+        
+        if (totalC > totalD) {
+            remanente = totalC - totalD;
+            IVAremanente = true;
+        } else if (totalC < totalD) {
+            impuesto = totalD - totalC;
+            IVAimpuesto = true;
+        }
+
+        //hacemos y subimos la partida a la base de datos
+        //primero obtenemos la ultima partida ingresada
+        int ultimaPartida = CuantosIdP();
+        ultimaPartida = ultimaPartida + 1;//nueva partida
+
+        //obtenemos la fecha del sistema
+        Calendar fecha = new GregorianCalendar();
+        int anioi = fecha.get(Calendar.YEAR);
+        String anio = String.valueOf(anioi);
+        int mesi = fecha.get(Calendar.MONTH);
+        String mes = String.valueOf(mesi);
+        int diai = fecha.get(Calendar.DAY_OF_MONTH);
+        if (diai < 10) {
+            String dia = "0"+String.valueOf(diai);
+        }else{
+            String dia = String.valueOf(diai);
+        }
+        
+        String fechaS = "2010" + "-" + mes + "-" + "02";
+        String a = "Ajuste de IVA";
+        //insertamos la partida
+        DecimalFormat formato = new DecimalFormat("#.00");
+        Conexion insertar = new Conexion();
+        insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'ajuste de IVA');");
+       
+        if (IVAremanente) {
+            if (debitoD > debitoH) {
+                System.out.println("es la primera");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+            } else if (debitoD < debitoH) {
+                System.out.println("es la segunda");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+            }
+
+        } else if (IVAimpuesto) {
+            if (debitoD > debitoH) {
+                System.out.println("es la tercera");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+            } else if (debitoD < debitoH) {
+                System.out.println("es la cuarta");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0)");
+                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+            }
+        }
+        CargandoPartidas();
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TableMostrarPartidas;

@@ -323,6 +323,7 @@
                 </Property>
               </Properties>
               <Events>
+                <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="tablePartidaPreviewMouseDragged"/>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tablePartidaPreviewMouseClicked"/>
               </Events>
               <AuxValues>
@@ -403,6 +404,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Exento"/>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnExentoMouseClicked"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
