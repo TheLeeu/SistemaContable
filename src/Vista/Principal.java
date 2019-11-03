@@ -107,6 +107,11 @@ public class Principal extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -351,7 +356,7 @@ public class Principal extends javax.swing.JFrame {
         while (Col > 0) {
             //aqui hacemos una validacion para saber cual es el numero de la partida que se a seleccionado
             if ((busqueda + i).equals(nPartida)) {
-                Col = 0;
+                Col = 0;//para que salga del while
                 idPartida = i;
                 //mostramos los botones
                 btnModificar.setVisible(true);
@@ -378,6 +383,37 @@ public class Principal extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         AjusteIVA();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        AgregarPartida agg = new AgregarPartida();
+        DefaultTableModel modelo = (DefaultTableModel) agg.tablePartidaPreview.getModel();
+        try {
+            Conexion con = new Conexion();
+            ResultSet rs = null;
+            ResultSet rs1 = null;
+
+            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + "");
+            rs1 = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + idPartida + "");
+
+            while (rs.next()) {
+                String partida = "Partida " + rs.getString("id_partida");
+                modelo.addRow(new Object[]{rs.getString("fecha"), partida, "", ""});
+                agg.txtFecha.setText(rs.getString("fecha"));
+                agg.jTextField1.setText(rs.getString("id_partida"));
+                while (rs1.next()) {
+                    modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
+                }
+                modelo.addRow(new Object[]{"", rs.getString("concepto"), "", ""});
+                agg.txtConcepto.setText(rs.getString("concepto"));
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        agg.jButton1.setVisible(false);
+        agg.btnModificar.setVisible(true);
+        agg.setVisible(true);
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -575,13 +611,12 @@ public class Principal extends javax.swing.JFrame {
         }
 
         //ahora vamos a realizar las T para el DFI y CFI
-        
         if (debitoD > debitoH) {
             totalD = debitoD - debitoH;
         } else if (debitoD < debitoH) {
             totalD = debitoH - debitoD;
         }
-        
+
         if (creditoD > creditoH) {
             totalC = creditoD - creditoH;
         } else if (creditoD < creditoH) {
@@ -591,7 +626,7 @@ public class Principal extends javax.swing.JFrame {
         //hacemos el ajuste de iva
         Double remanente = 0.0;
         Double impuesto = 0.0;
-        
+
         if (totalC > totalD) {
             remanente = totalC - totalD;
             IVAremanente = true;
@@ -613,18 +648,18 @@ public class Principal extends javax.swing.JFrame {
         String mes = String.valueOf(mesi);
         int diai = fecha.get(Calendar.DAY_OF_MONTH);
         if (diai < 10) {
-            String dia = "0"+String.valueOf(diai);
-        }else{
+            String dia = "0" + String.valueOf(diai);
+        } else {
             String dia = String.valueOf(diai);
         }
-        
+
         String fechaS = "2010" + "-" + mes + "-" + "02";
         String a = "Ajuste de IVA";
         //insertamos la partida
         DecimalFormat formato = new DecimalFormat("#.00");
         Conexion insertar = new Conexion();
         insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'ajuste de IVA');");
-       
+
         if (IVAremanente) {
             if (debitoD > debitoH) {
                 System.out.println("es la primera");

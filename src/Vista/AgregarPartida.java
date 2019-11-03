@@ -1,7 +1,9 @@
 package Vista;
 
 import Modelo.Conexion;
+import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -11,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class AgregarPartida extends javax.swing.JFrame {
-    
+
     boolean Encabezado = false;//Nos servira para insertar el encabezado si no esta
     boolean Concepto = true;
     int UltimaDebe = 1;//nos servira para saber en donde ir insertando en el debe
@@ -31,8 +33,9 @@ public class AgregarPartida extends javax.swing.JFrame {
         cargarNPartida();  //funcion que cargara el numero de partida que halla
         btnExento.setSelected(true);
         OcultarDC();
+
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -68,6 +71,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         btnAgregarCuenta = new javax.swing.JButton();
         btn_eliminar = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jTextField1 = new javax.swing.JTextField();
         btnModificar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -76,7 +80,6 @@ public class AgregarPartida extends javax.swing.JFrame {
         jLabel1.setText("Partida");
 
         txtNPartida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtNPartida.setText("1");
         txtNPartida.setEnabled(false);
         txtNPartida.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -136,7 +139,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         Panel_aggCuentasLayout.setVerticalGroup(
             Panel_aggCuentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(Panel_aggCuentasLayout.createSequentialGroup()
-                .addContainerGap(54, Short.MAX_VALUE)
+                .addContainerGap(40, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(Panel_aggCuentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -214,6 +217,11 @@ public class AgregarPartida extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -237,7 +245,9 @@ public class AgregarPartida extends javax.swing.JFrame {
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                             .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                            .addComponent(txtNPartida, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jTextField1)
+                                                .addComponent(txtNPartida, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE))))))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,10 +268,10 @@ public class AgregarPartida extends javax.swing.JFrame {
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                             .addComponent(btn_haber)))
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(btnAgregarCuenta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btn_eliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                                        .addComponent(btn_eliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnExento)
@@ -281,7 +291,9 @@ public class AgregarPartida extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -319,17 +331,17 @@ public class AgregarPartida extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnExento)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAgregarCuenta)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btn_eliminar)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnModificar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(Panel_aggCuentas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -338,7 +350,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCuentaActionPerformed
-        
+
         preview();//Funcion que permite una vista previa de la partida, se llama cada vez que se agrega una cuenta
         sumar();   //Hace la sumatoria del debe y haber, para ver si cuadra
 
@@ -367,14 +379,14 @@ public class AgregarPartida extends javax.swing.JFrame {
     }//GEN-LAST:event_txtSaldoKeyTyped
 
     private void jTextField3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyTyped
-        
+
         cbxLista.setPopupVisible(true);
         cargarLista("SELECT * FROM `cuenta` WHERE `nombre_cuenta` LIKE '" + jTextField3.getText() + "%';");
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3KeyTyped
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
-        
+
         if (!eliminar(false)) {
             JOptionPane.showMessageDialog(rootPane, "No puedes eliminar el concepto o el n de partida");
         }
@@ -385,7 +397,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_eliminarActionPerformed
 
     private void tablePartidaPreviewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablePartidaPreviewMouseClicked
-        
+
         btn_eliminar.setEnabled(true);
 
 // TODO add your handling code here:
@@ -398,13 +410,13 @@ public class AgregarPartida extends javax.swing.JFrame {
             try {
                 insertarPartida();
                 JOptionPane.showMessageDialog(rootPane, "Partida ingresada correctamente a la base de datos");
-                
+
                 this.cargarNPartida();
                 this.cargarLista("SELECT * FROM `cuenta`;");
-                
+
                 this.setVisible(false);
                 this.dispose();
-                
+
             } catch (SQLException ex) {
                 Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(rootPane, "Revisa los datos ingresados!");
@@ -412,7 +424,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(rootPane, "LOS TOTALES DEL DEBE Y HABER TIENEN QUE SER IGUALES");
         }
-        
+
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -424,6 +436,14 @@ public class AgregarPartida extends javax.swing.JFrame {
     private void tablePartidaPreviewMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablePartidaPreviewMouseDragged
         btn_eliminar.setEnabled(true);
     }//GEN-LAST:event_tablePartidaPreviewMouseDragged
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        try {
+            ModificarPartida();
+        } catch (SQLException ex) {
+            Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -460,7 +480,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
         });
     }
-    
+
     public void cargarLista(String query) {
         int nivel;
         try {
@@ -481,12 +501,12 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
             //cerramos la conexion cerrando el resultado obtenido
             rs.close();
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void sumar() {
         double t = 0;
         double p = 0;
@@ -496,22 +516,22 @@ public class AgregarPartida extends javax.swing.JFrame {
                 if (!tablePartidaPreview.getValueAt(i, 2).toString().isEmpty()) {
                     p = Double.parseDouble(tablePartidaPreview.getValueAt(i, 2).toString());
                     t += p;
-                    
+
                     if (i < tablePartidaPreview.getRowCount() - 1) {
-                        
+
                         if (tablePartidaPreview.getValueAt(i + 1, 2).toString().isEmpty()) { //si la siguiente celda esta vacia
                             this.UltimaDebe = i + 1; //entonces esta es la ultima cuenta del debe
                         }
-                        
+
                     }
-                    
+
                 }
             }
             txtTotalDebe.setText(String.valueOf(t));
         } else {
             this.UltimaDebe = 1;
         }
-        
+
         double t1 = 0;
         double p1 = 0;
         if (tablePartidaPreview.getRowCount() > 1) {
@@ -523,10 +543,14 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
             txtTotalHaber.setText(String.valueOf(t1));
         }
-        
+
     }
-    
+
     public void preview() {
+        if (!(jTextField1.getText().toString().isEmpty())) {
+            txtNPartida.setText(jTextField1.getText());
+            Encabezado = true;
+        }
         boolean DH_seleccionado = false;//nos servira para ver que los botones esten seleccionados
         //para ver que el boton debe o haber sea seleccionado
         if (btn_debe.isSelected() || btn_haber.isSelected()) {
@@ -535,7 +559,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         if ((!txtNPartida.getText().toString().isEmpty()) && (!txtFecha.getText().toString().isEmpty()) && (!txtSaldo.getText().toString().isEmpty()) && (DH_seleccionado) && (!txtConcepto.getText().toString().isEmpty())) {
             DecimalFormat formato = new DecimalFormat("#.00");
             DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
-            
+
             if (tablePartidaPreview.getRowCount() == 0 || !Encabezado) {
                 //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
                 _Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
@@ -543,37 +567,37 @@ public class AgregarPartida extends javax.swing.JFrame {
             } else if (Concepto) {
                 _Modelo.removeRow(_Modelo.getRowCount() - 1);
             }
-            
+
             if (btn_debe.isSelected()) {
                 if (btnMasIVA.isSelected()) {
-                    
+
                     if (btnDFI.isSelected()) { //en caso de que halla debito Fiscal
                         //agregamos la cuenta objetivo MAS el respectivo Debito
                         _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
                         _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
-                        
+
                     } else if (btnCFI.isSelected()) {
                         //agregamos la cuenta objetivo MAS el respectivo Credito
                         _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
                         _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
                     }
-                    
+
                 } else if (btnExento.isSelected()) { //Si esta exento de iva (por defecto) solo añadimos la cuenta objetivo
                     _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), ""});
-                    
+
                 } else if (btnIncluido.isSelected()) { //Para iva INcluido
 
                     if (btnDFI.isSelected()) {
                         //Exluimos del saldo lo que va hacia el IVA y lo que va hacia la cuenta objetivo
                         _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
                         _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
-                        
+
                     } else if (btnCFI.isSelected()) {
                         _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
                         _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
                     }
                 }
-                
+
             } else if (btn_haber.isSelected()) {
                 if (btnMasIVA.isSelected()) {
                     if (btnDFI.isSelected()) {
@@ -595,13 +619,13 @@ public class AgregarPartida extends javax.swing.JFrame {
                     }
                 }
             }
-            
+
             _Modelo.addRow(new Object[]{"", txtConcepto.getText(), "", ""});
         } else {
             JOptionPane.showMessageDialog(null, "TODOS LOS CAMPOS SON REQUERIDOS");
         }
     }
-    
+
     public String[][] datosTabla(DefaultTableModel table) {
         int nRow = table.getRowCount(), nCol = table.getColumnCount();
         String[][] tableData = new String[nRow][nCol];
@@ -613,7 +637,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         }
         return tableData;
     }
-    
+
     public void insertarPartida() throws SQLException { //Funcion que inserta una partida con sus respectivas cuentas en la BD
 
         //System.out.println("llegue aca");
@@ -627,7 +651,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         /*--------------Obtencion de cuentas-------------*/  //ya tengo idpartida
         //obtenemos todos los datos existentes el la tabla
         String datos[][] = datosTabla(_Modelo);
-        
+
         String IdCuenta = null;
 
         //la fecha y el concepto seran faciles de obtener (son de la primera y la ultima fila
@@ -647,7 +671,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                 IdCuenta = rs.getString(1);
                 //System.out.println(IdCuenta);
             }
-            
+
             if (datos[i][2].isEmpty()) {
                 datos[i][2] = "0"; //hacemos cero el valor inexistente, porque el query no admitira un valor vacio
             }
@@ -659,12 +683,16 @@ public class AgregarPartida extends javax.swing.JFrame {
             ConInsertar.Ejecutar(
                     "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
                     + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][2] + "', '" + datos[i][3] + "');");
-            
+
         }
-        
+
         rs.close();// cerramos el conjunto de resultados para poder usarlo despues 
         System.out.println(Fecha);
 
+    }
+
+    public void ModificarPartida() throws SQLException{ 
+       
     }
 
     //valida que solo se ingresen numero a un jtext y recibe una variable de tipo evento
@@ -678,14 +706,14 @@ public class AgregarPartida extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, "Ingresar solo numeros");//le decimos que solo ingrese numeros
         }
     }
-    
+
     public void cargarNPartida() {
-        
+
         Conexion Cone = new Conexion();
         ResultSet rs = Cone.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ");
-        
+
         String aux = null;
-        
+
         try {
             if (rs.first()) {//recorre el resultset al siguiente registro si es que existen
 
@@ -694,51 +722,51 @@ public class AgregarPartida extends javax.swing.JFrame {
                 while (rs.next()) {//mientras tenga registros que haga lo siguiente
 
                     aux = rs.getString(1);
-                    
+
                 }
                 txtNPartida.setText(String.valueOf(Integer.parseInt(aux) + 1)); //en caso de haber, sumamos 1
             } else {
-                
+
                 txtNPartida.setText("1");//esta vacio el resultset
 
             }
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     public void OcultarDC() {
         if (btnExento.isSelected()) {
             btnDFI.setVisible(false);
             btnCFI.setVisible(false);
-            
+
         }
     }
-    
+
     public boolean eliminar(boolean all) {
         boolean exito = false;
         String isConcepto, isPartida;
-        
+
         DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
-        
+
         int Filas[] = {};
-        
+
         if (all) { //esto para borrar todas las filas
 
             int[] aux = new int[_Modelo.getRowCount()];
-            
+
             for (int i = 0; i < _Modelo.getRowCount(); i++) {
                 aux[i] = i;
             }
-            
+
             Filas = aux;
             exito = true;
-            
+
         } else { //esto para borrar las filas seleccionadas
 
             Filas = tablePartidaPreview.getSelectedRows();
-            
+
             isConcepto = _Modelo.getValueAt(Filas[Filas.length - 1], 1).toString();//tomamos el ultimo valor de las filas seleccionadas
 
             isPartida = _Modelo.getValueAt(Filas[0], 1).toString(); //tomamos el primer valor de las filas seleccionadas
@@ -749,21 +777,21 @@ public class AgregarPartida extends javax.swing.JFrame {
                 exito = true;
             }
         }
-        
+
         for (int i = Filas[Filas.length - 1]; i >= Filas[0]; i--) { //desde el ultimo dato hasta el primero
             if (exito) {
                 _Modelo.removeRow(i);
             }
-            
+
         }
-        
+
         sumar();
         if (_Modelo.getRowCount() < 3) {
             UltimaDebe = 1;
         }
-        
+
         return exito;
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -771,32 +799,33 @@ public class AgregarPartida extends javax.swing.JFrame {
     private javax.swing.ButtonGroup Grupo_botones_DH;
     public javax.swing.JPanel Panel_aggCuentas;
     public javax.swing.JButton btnAgregarCuenta;
-    private javax.swing.JRadioButton btnCFI;
-    private javax.swing.JRadioButton btnDFI;
+    public javax.swing.JRadioButton btnCFI;
+    public javax.swing.JRadioButton btnDFI;
     public javax.swing.JRadioButton btnExento;
-    private javax.swing.JRadioButton btnIncluido;
-    private javax.swing.JRadioButton btnMasIVA;
+    public javax.swing.JRadioButton btnIncluido;
+    public javax.swing.JRadioButton btnMasIVA;
     public javax.swing.JButton btnModificar;
-    private javax.swing.JRadioButton btn_debe;
-    private javax.swing.JButton btn_eliminar;
-    private javax.swing.JRadioButton btn_haber;
+    public javax.swing.JRadioButton btn_debe;
+    public javax.swing.JButton btn_eliminar;
+    public javax.swing.JRadioButton btn_haber;
     public javax.swing.JComboBox cbxLista;
     private javax.swing.ButtonGroup grupoBotonesDC;
     public javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
+    public javax.swing.JLabel jLabel1;
+    public javax.swing.JLabel jLabel2;
+    public javax.swing.JLabel jLabel3;
+    public javax.swing.JLabel jLabel5;
+    public javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField jTextField3;
+    public static javax.swing.JTextField jTextField1;
+    public javax.swing.JTextField jTextField3;
     public javax.swing.JTable tablePartidaPreview;
-    private javax.swing.JTextArea txtConcepto;
-    private javax.swing.JTextField txtFecha;
-    private javax.swing.JTextField txtNPartida;
-    private javax.swing.JTextField txtSaldo;
+    public javax.swing.JTextArea txtConcepto;
+    public static javax.swing.JTextField txtFecha;
+    public javax.swing.JTextField txtNPartida;
+    public javax.swing.JTextField txtSaldo;
     private javax.swing.JTextField txtTotalDebe;
     private javax.swing.JTextField txtTotalHaber;
     // End of variables declaration//GEN-END:variables
