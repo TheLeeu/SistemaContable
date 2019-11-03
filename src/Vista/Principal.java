@@ -399,7 +399,7 @@ public class Principal extends javax.swing.JFrame {
                 String partida = "Partida " + rs.getString("id_partida");
                 modelo.addRow(new Object[]{rs.getString("fecha"), partida, "", ""});
                 agg.txtFecha.setText(rs.getString("fecha"));
-                agg.jTextField1.setText(rs.getString("id_partida"));
+                agg.txtModif.setText(rs.getString("id_partida"));
                 while (rs1.next()) {
                     modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
                 }
