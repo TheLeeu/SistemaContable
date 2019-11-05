@@ -372,9 +372,11 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_TableMostrarPartidasMouseClicked
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+
         if (EliminarPartidaBD()) {
             ModificarId(idPartida);
             CargandoPartidas();
+            sumar();
         } else {
             JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR");
         }
@@ -413,6 +415,8 @@ public class Principal extends javax.swing.JFrame {
         agg.jButton1.setVisible(false);
         agg.btnModificar.setVisible(true);
         agg.setVisible(true);
+        agg.setDefaultCloseOperation(agg.DISPOSE_ON_CLOSE);
+
     }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
@@ -503,6 +507,8 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
             jTextField1.setText(String.valueOf(t1));
+        } else {
+            jTextField1.setText("");
         }
 
         double t = 0;
@@ -515,6 +521,8 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
             jTextField2.setText(String.valueOf(t));
+        } else {
+            jTextField2.setText("");
         }
 
     }
@@ -623,70 +631,75 @@ public class Principal extends javax.swing.JFrame {
             totalC = creditoH - creditoD;
         }
 
-        //hacemos el ajuste de iva
-        Double remanente = 0.0;
-        Double impuesto = 0.0;
+        if ((totalC > 0) || (totalD > 0)) {
+            //hacemos el ajuste de iva
+            Double remanente = 0.0;
+            Double impuesto = 0.0;
 
-        if (totalC > totalD) {
-            remanente = totalC - totalD;
-            IVAremanente = true;
-        } else if (totalC < totalD) {
-            impuesto = totalD - totalC;
-            IVAimpuesto = true;
-        }
+            if (totalC > totalD) {
+                remanente = totalC - totalD;
+                IVAremanente = true;
+            } else if (totalC < totalD) {
+                impuesto = totalD - totalC;
+                IVAimpuesto = true;
+            }
 
-        //hacemos y subimos la partida a la base de datos
-        //primero obtenemos la ultima partida ingresada
-        int ultimaPartida = CuantosIdP();
-        ultimaPartida = ultimaPartida + 1;//nueva partida
+            //hacemos y subimos la partida a la base de datos
+            //primero obtenemos la ultima partida ingresada
+            int ultimaPartida = CuantosIdP();
+            ultimaPartida = ultimaPartida + 1;//nueva partida
 
-        //obtenemos la fecha del sistema
-        Calendar fecha = new GregorianCalendar();
-        int anioi = fecha.get(Calendar.YEAR);
-        String anio = String.valueOf(anioi);
-        int mesi = fecha.get(Calendar.MONTH);
-        String mes = String.valueOf(mesi);
-        int diai = fecha.get(Calendar.DAY_OF_MONTH);
-        if (diai < 10) {
-            String dia = "0" + String.valueOf(diai);
+            //obtenemos la fecha del sistema
+            Calendar fecha = new GregorianCalendar();
+            int anioi = fecha.get(Calendar.YEAR);
+            String anio = String.valueOf(anioi);
+            int mesi = fecha.get(Calendar.MONTH);
+            String mes = String.valueOf(mesi);
+            int diai = fecha.get(Calendar.DAY_OF_MONTH);
+            if (diai < 10) {
+                String dia = "0" + String.valueOf(diai);
+            } else {
+                String dia = String.valueOf(diai);
+            }
+
+            String fechaS = "2010" + "-" + mes + "-" + "02";
+            String a = "Ajuste de IVA";
+            //insertamos la partida
+            DecimalFormat formato = new DecimalFormat("#.00");
+            Conexion insertar = new Conexion();
+            insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'ajuste de IVA');");
+
+            if (IVAremanente) {
+                if (debitoD > debitoH) {
+                    System.out.println("es la primera");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+                } else if (debitoD < debitoH) {
+                    System.out.println("es la segunda");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+                }
+
+            } else if (IVAimpuesto) {
+                if (debitoD > debitoH) {
+                    System.out.println("es la tercera");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+                } else if (debitoD < debitoH) {
+                    System.out.println("es la cuarta");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0)");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+                }
+            }
+            CargandoPartidas();
         } else {
-            String dia = String.valueOf(diai);
+            JOptionPane.showMessageDialog(null, "NO HAY REGISTRO DE IVA");
         }
 
-        String fechaS = "2010" + "-" + mes + "-" + "02";
-        String a = "Ajuste de IVA";
-        //insertamos la partida
-        DecimalFormat formato = new DecimalFormat("#.00");
-        Conexion insertar = new Conexion();
-        insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'ajuste de IVA');");
-
-        if (IVAremanente) {
-            if (debitoD > debitoH) {
-                System.out.println("es la primera");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
-            } else if (debitoD < debitoH) {
-                System.out.println("es la segunda");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
-            }
-
-        } else if (IVAimpuesto) {
-            if (debitoD > debitoH) {
-                System.out.println("es la tercera");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
-            } else if (debitoD < debitoH) {
-                System.out.println("es la cuarta");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0)");
-                insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
-            }
-        }
-        CargandoPartidas();
     }
 
 

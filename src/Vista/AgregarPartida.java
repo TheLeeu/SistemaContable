@@ -438,32 +438,38 @@ public class AgregarPartida extends javax.swing.JFrame {
     }//GEN-LAST:event_tablePartidaPreviewMouseDragged
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        
-     String debe = txtTotalDebe.getText();
-        String haber = txtTotalHaber.getText();
-        if (debe.equals(haber)) {
-            try {
-                new Conexion().Ejecutar("DELETE FROM `cuenta_partida` WHERE `partida_id` = "+ txtModif.getText());
-                
-                ModificarPartida();
-                JOptionPane.showMessageDialog(rootPane, "Partida ingresada correctamente a la base de datos");
+        sumar();
+        if (((!txtTotalDebe.getText().toString().isEmpty()) && (!txtTotalHaber.getText().toString().isEmpty())) && (Double.parseDouble(txtTotalDebe.getText().toString()) > 0 && Double.parseDouble(txtTotalHaber.getText().toString()) > 0)) {
+            if ((Double.parseDouble(txtTotalDebe.getText().toString())) ==  (Double.parseDouble(txtTotalHaber.getText().toString()))) {
+                String debe = txtTotalDebe.getText();
+                String haber = txtTotalHaber.getText();
+                if (debe.equals(haber)) {
+                    try {
+                        new Conexion().Ejecutar("DELETE FROM `cuenta_partida` WHERE `partida_id` = " + txtModif.getText());
 
-                this.cargarNPartida();
-                this.cargarLista("SELECT * FROM `cuenta`;");
+                        ModificarPartida();
+                        JOptionPane.showMessageDialog(rootPane, "Partida ingresada correctamente a la base de datos");
 
-                this.setVisible(false);
-                this.dispose();
+                        this.cargarNPartida();
+                        this.cargarLista("SELECT * FROM `cuenta`;");
 
-            } catch (SQLException ex) {
-                Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
-                JOptionPane.showMessageDialog(rootPane, "Revisa los datos ingresados!");
+                        this.setVisible(false);
+                        this.dispose();
+
+                    } catch (SQLException ex) {
+                        Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+                        JOptionPane.showMessageDialog(rootPane, "Revisa los datos ingresados!");
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(rootPane, "LOS TOTALES DEL DEBE Y HABER TIENEN QUE SER IGUALES");
+                }
+            }else{
+                JOptionPane.showMessageDialog(null, "LOS TOTALES DEBEN SER IGUALES");
             }
-        } else {
-            JOptionPane.showMessageDialog(rootPane, "LOS TOTALES DEL DEBE Y HABER TIENEN QUE SER IGUALES");
-        }   
-   
-        
-        
+        }else{
+            JOptionPane.showMessageDialog(null, "INGRESE UNA CUENTA");
+        }
+
     }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
@@ -578,7 +584,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             DH_seleccionado = true;
         }
         if ((!txtNPartida.getText().toString().isEmpty()) && (!txtFecha.getText().toString().isEmpty()) && (!txtSaldo.getText().toString().isEmpty()) && (DH_seleccionado) && (!txtConcepto.getText().toString().isEmpty())) {
-            DecimalFormat formato = new DecimalFormat("#,00");
+            DecimalFormat formato = new DecimalFormat("#.00");
             DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
 
             if (tablePartidaPreview.getRowCount() == 0 || !Encabezado) {
@@ -712,8 +718,8 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     }
 
-    public void ModificarPartida() throws SQLException{ 
-       
+    public void ModificarPartida() throws SQLException {
+
         //System.out.println("llegue aca");
         DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
         Conexion ConInsertar = new Conexion();
@@ -733,37 +739,38 @@ public class AgregarPartida extends javax.swing.JFrame {
         String Concepto = datos[tablePartidaPreview.getRowCount() - 1][1];
         //System.out.println("Fecha: "+Fecha+"      Concepto: "+Concepto);
 
-        //Primero insertamos el detalle de la partida para referenciarla luego
-        ConInsertar.Ejecutar("UPDATE `partida` "
-                + "SET `fecha`= '"+ Fecha + "',`concepto`= '"+ Concepto +"' WHERE `id_partida` = "+ Id );
-
-        //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
-        for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
-
-            //consultamos la id de la cuenta que halla para usar su id luego
-            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'");
-            while (rs.next()) {//mientras tenga registros que haga lo siguiente
-                IdCuenta = rs.getString(1);
-                //System.out.println(IdCuenta);
-            }
-
-            if (datos[i][2].isEmpty()) {
-                datos[i][2] = "0"; //hacemos cero el valor inexistente, porque el query no admitira un valor vacio
-            }
-            if (datos[i][3].isEmpty()) {
-                datos[i][3] = "0";
-            }
-
-            //ejecutamos el query para una cuenta de la partida
-            ConInsertar.Ejecutar(
-                    "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
-                    + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][2] + "', '" + datos[i][3] + "');");
-
-        }
-
-        rs.close();// Esto es de modificar 
         
-        
+            //Primero insertamos el detalle de la partida para referenciarla luego
+            ConInsertar.Ejecutar("UPDATE `partida` "
+                    + "SET `fecha`= '" + Fecha + "',`concepto`= '" + Concepto + "' WHERE `id_partida` = " + Id);
+
+            //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
+            for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
+
+                //consultamos la id de la cuenta que halla para usar su id luego
+                rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'");
+                while (rs.next()) {//mientras tenga registros que haga lo siguiente
+                    IdCuenta = rs.getString(1);
+                    //System.out.println(IdCuenta);
+                }
+
+                if (datos[i][2].isEmpty()) {
+                    datos[i][2] = "0"; //hacemos cero el valor inexistente, porque el query no admitira un valor vacio
+                }
+                if (datos[i][3].isEmpty()) {
+                    datos[i][3] = "0";
+                }
+
+                //ejecutamos el query para una cuenta de la partida
+                ConInsertar.Ejecutar(
+                        "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
+                        + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][2] + "', '" + datos[i][3] + "');");
+
+            }
+
+            rs.close();// Esto es de modificar 
+
+
     }
 
     //valida que solo se ingresen numero a un jtext y recibe una variable de tipo evento
