@@ -667,7 +667,7 @@ public class Principal extends javax.swing.JFrame {
             //insertamos la partida
             DecimalFormat formato = new DecimalFormat("#.00");
             Conexion insertar = new Conexion();
-            insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'ajuste de IVA');");
+            insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'Ajuste de IVA');");
 
             if (IVAremanente) {
                 if (debitoD > debitoH) {

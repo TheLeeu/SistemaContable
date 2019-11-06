@@ -380,9 +380,25 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     private void jTextField3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyTyped
 
-        cbxLista.setPopupVisible(true);
-        cargarLista("SELECT * FROM `cuenta` WHERE `nombre_cuenta` LIKE '" + jTextField3.getText() + "%';");
-        // TODO add your handling code here:
+        char validar = evt.getKeyChar();//obtiene el caracter de la tecla que presiona el usuario
+        
+        if (Character.isLetter(validar)) {
+            cargarLista("SELECT * FROM `cuenta` WHERE `nombre_cuenta` LIKE '" + jTextField3.getText() + "%';");
+            cbxLista.setPopupVisible(true);
+        } else {
+            cargarLista("SELECT * FROM `cuenta` WHERE `codigo` = '" + jTextField3.getText() + "';");
+            cbxLista.setPopupVisible(true);
+        }
+        
+        if(jTextField3.getText().toString().isEmpty()){
+            cargarLista("SELECT * FROM `cuenta`;");
+            cbxLista.setPopupVisible(true);
+        }
+        if(jTextField3.getText().toString().equals("Deudor") || jTextField3.getText().toString().equals("Acreedor")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `tipo_saldo` = '"+jTextField3.getText().toString()+"'");
+            cbxLista.setPopupVisible(true);
+        }
+        
     }//GEN-LAST:event_jTextField3KeyTyped
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
@@ -440,7 +456,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         sumar();
         if (((!txtTotalDebe.getText().toString().isEmpty()) && (!txtTotalHaber.getText().toString().isEmpty())) && (Double.parseDouble(txtTotalDebe.getText().toString()) > 0 && Double.parseDouble(txtTotalHaber.getText().toString()) > 0)) {
-            if ((Double.parseDouble(txtTotalDebe.getText().toString())) ==  (Double.parseDouble(txtTotalHaber.getText().toString()))) {
+            if ((Double.parseDouble(txtTotalDebe.getText().toString())) == (Double.parseDouble(txtTotalHaber.getText().toString()))) {
                 String debe = txtTotalDebe.getText();
                 String haber = txtTotalHaber.getText();
                 if (debe.equals(haber)) {
@@ -463,10 +479,10 @@ public class AgregarPartida extends javax.swing.JFrame {
                 } else {
                     JOptionPane.showMessageDialog(rootPane, "LOS TOTALES DEL DEBE Y HABER TIENEN QUE SER IGUALES");
                 }
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "LOS TOTALES DEBEN SER IGUALES");
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "INGRESE UNA CUENTA");
         }
 
@@ -510,10 +526,11 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     public void cargarLista(String query) {
         int nivel;
+        int otro_nivel;
         try {
             //Nueva conexion
             Conexion conecta = new Conexion();
-            ResultSet rs;
+            ResultSet rs, rs1;
             rs = conecta.Consulta(query);
 
             //removemos todo del combo box
@@ -524,6 +541,15 @@ public class AgregarPartida extends javax.swing.JFrame {
                 nivel = Integer.parseInt(rs.getString(3));
                 if (nivel > 2) {
                     cbxLista.addItem(rs.getString(4));
+                } else if (nivel <= 2) {
+                    otro_nivel = Integer.parseInt(rs.getString(2));
+                    rs1 = conecta.Consulta("SELECT `codigo`, `Nivel`, `nombre_cuenta` FROM `cuenta` WHERE `codigo` LIKE '" + otro_nivel + "%'");
+                    while (rs1.next()) {
+                        nivel = Integer.parseInt(rs1.getString(2));
+                        if (nivel > 2) {
+                            cbxLista.addItem(rs1.getString(3));
+                        }
+                    }
                 }
             }
             //cerramos la conexion cerrando el resultado obtenido
@@ -739,37 +765,35 @@ public class AgregarPartida extends javax.swing.JFrame {
         String Concepto = datos[tablePartidaPreview.getRowCount() - 1][1];
         //System.out.println("Fecha: "+Fecha+"      Concepto: "+Concepto);
 
-        
-            //Primero insertamos el detalle de la partida para referenciarla luego
-            ConInsertar.Ejecutar("UPDATE `partida` "
-                    + "SET `fecha`= '" + Fecha + "',`concepto`= '" + Concepto + "' WHERE `id_partida` = " + Id);
+        //Primero insertamos el detalle de la partida para referenciarla luego
+        ConInsertar.Ejecutar("UPDATE `partida` "
+                + "SET `fecha`= '" + Fecha + "',`concepto`= '" + Concepto + "' WHERE `id_partida` = " + Id);
 
-            //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
-            for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
+        //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
+        for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
 
-                //consultamos la id de la cuenta que halla para usar su id luego
-                rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'");
-                while (rs.next()) {//mientras tenga registros que haga lo siguiente
-                    IdCuenta = rs.getString(1);
-                    //System.out.println(IdCuenta);
-                }
-
-                if (datos[i][2].isEmpty()) {
-                    datos[i][2] = "0"; //hacemos cero el valor inexistente, porque el query no admitira un valor vacio
-                }
-                if (datos[i][3].isEmpty()) {
-                    datos[i][3] = "0";
-                }
-
-                //ejecutamos el query para una cuenta de la partida
-                ConInsertar.Ejecutar(
-                        "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
-                        + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][2] + "', '" + datos[i][3] + "');");
-
+            //consultamos la id de la cuenta que halla para usar su id luego
+            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'");
+            while (rs.next()) {//mientras tenga registros que haga lo siguiente
+                IdCuenta = rs.getString(1);
+                //System.out.println(IdCuenta);
             }
 
-            rs.close();// Esto es de modificar 
+            if (datos[i][2].isEmpty()) {
+                datos[i][2] = "0"; //hacemos cero el valor inexistente, porque el query no admitira un valor vacio
+            }
+            if (datos[i][3].isEmpty()) {
+                datos[i][3] = "0";
+            }
 
+            //ejecutamos el query para una cuenta de la partida
+            ConInsertar.Ejecutar(
+                    "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
+                    + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][2] + "', '" + datos[i][3] + "');");
+
+        }
+
+        rs.close();// Esto es de modificar 
 
     }
 
