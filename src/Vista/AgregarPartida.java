@@ -531,7 +531,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             //Nueva conexion
             Conexion conecta = new Conexion();
             ResultSet rs, rs1;
-            rs = conecta.Consulta(query);
+            rs = conecta.Consulta(query,conecta.getConexion());
 
             //removemos todo del combo box
             cbxLista.removeAllItems();
@@ -543,7 +543,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                     cbxLista.addItem(rs.getString(4));
                 } else if (nivel <= 2) {
                     otro_nivel = Integer.parseInt(rs.getString(2));
-                    rs1 = conecta.Consulta("SELECT `codigo`, `Nivel`, `nombre_cuenta` FROM `cuenta` WHERE `codigo` LIKE '" + otro_nivel + "%'");
+                    rs1 = conecta.Consulta("SELECT `codigo`, `Nivel`, `nombre_cuenta` FROM `cuenta` WHERE `codigo` LIKE '" + otro_nivel + "%'",conecta.getConexion());
                     while (rs1.next()) {
                         nivel = Integer.parseInt(rs1.getString(2));
                         if (nivel > 2) {
@@ -553,7 +553,10 @@ public class AgregarPartida extends javax.swing.JFrame {
                 }
             }
             //cerramos la conexion cerrando el resultado obtenido
+            
             rs.close();
+            conecta.close();
+            
 
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
@@ -714,15 +717,16 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         //Primero insertamos el detalle de la partida para referenciarla luego
         ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`) VALUES (" + Id + ",'" + Fecha + "','" + Concepto + "')");
-
+        
         //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
         for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
 
             //consultamos la id de la cuenta que halla para usar su id luego
-            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'");
+            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'",ConInsertar.getConexion());
             while (rs.next()) {//mientras tenga registros que haga lo siguiente
                 IdCuenta = rs.getString(1);
                 //System.out.println(IdCuenta);
+                System.out.println("entra");
             }
 
             if (datos[i][2].isEmpty()) {
@@ -739,7 +743,8 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         }
 
-        rs.close();// cerramos el conjunto de resultados para poder usarlo despues 
+        rs.close();// cerramos el conjunto de resultados para poder usarlo despues
+        ConInsertar.close();
         System.out.println(Fecha);
 
     }
@@ -773,7 +778,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
 
             //consultamos la id de la cuenta que halla para usar su id luego
-            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'");
+            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'",ConInsertar.getConexion());
             while (rs.next()) {//mientras tenga registros que haga lo siguiente
                 IdCuenta = rs.getString(1);
                 //System.out.println(IdCuenta);
@@ -794,6 +799,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         }
 
         rs.close();// Esto es de modificar 
+        ConInsertar.close();
 
     }
 
@@ -812,7 +818,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     public void cargarNPartida() {
 
         Conexion Cone = new Conexion();
-        ResultSet rs = Cone.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ");
+        ResultSet rs = Cone.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ",Cone.getConexion());
 
         String aux = null;
 

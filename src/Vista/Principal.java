@@ -394,8 +394,8 @@ public class Principal extends javax.swing.JFrame {
             ResultSet rs = null;
             ResultSet rs1 = null;
 
-            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + "");
-            rs1 = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + idPartida + "");
+            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + "",con.getConexion());
+            rs1 = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + idPartida + "",con.getConexion());
 
             while (rs.next()) {
                 String partida = "Partida " + rs.getString("id_partida");
@@ -407,8 +407,13 @@ public class Principal extends javax.swing.JFrame {
                 }
                 modelo.addRow(new Object[]{"", rs.getString("concepto"), "", ""});
                 agg.txtConcepto.setText(rs.getString("concepto"));
-
+                
+                
+                
             }
+            con.close(); //aqui esta un close
+            rs.close();
+            rs1.close();
         } catch (SQLException ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -473,12 +478,12 @@ public class Principal extends javax.swing.JFrame {
         }
 
         Conexion con = new Conexion();
-        ResultSet rs = con.Consulta("SELECT * FROM `partida`");//consulta
+        ResultSet rs = con.Consulta("SELECT * FROM `partida`",con.getConexion());//consulta
         try {
             while (rs.next()) {
                 modelo.addRow(new Object[]{rs.getString("fecha"), "Partida N. " + rs.getString("id_partida"), "", ""});
                 Conexion con1 = new Conexion();
-                ResultSet rs1 = con1.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "");//consulta
+                ResultSet rs1 = con1.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "",con.getConexion());//consulta
                 try {
                     while (rs1.next()) {
                         modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
@@ -491,6 +496,7 @@ public class Principal extends javax.swing.JFrame {
                 sumar();
             }
             rs.close();
+            con.close();
         } catch (SQLException ex) {
             Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
         }

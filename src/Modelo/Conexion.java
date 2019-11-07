@@ -16,8 +16,11 @@ public class Conexion {
     private final String password = "";
     private final String url = "jdbc:mysql://localhost:3306/" + base;
     private Connection con = null;
+    public ResultSet rs = null;
 
     public Connection getConexion() {
+        
+        if(this.con == null){
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = (Connection) DriverManager.getConnection(this.url, this.user, this.password);
@@ -27,24 +30,29 @@ public class Conexion {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
         }
+        }
         return con;
     }
     
     //Devuelve un result set con todos los datos de la consulta que hallamos requerido
-    public ResultSet Consulta(String query) {
+    public ResultSet Consulta(String query, Connection conex) {
                     //IMPORTANTE CERRAR RESULT SET LUEGO DE USAR ESTA FUNCION
         try {
-            //Nueva conexion
-            Connection conex = this.getConexion();
 
             //creamos un estado de conexion
             Statement st = conex.createStatement();
             //Con dicho estado ejectuamos un query y capturamos los resultados en rs
-            ResultSet rs = st.executeQuery(query);
-
-            //removemos todo del combo box
-            return rs;
-            //cerramos la conexion cerrando el resultado obtenido
+            ResultSet res = st.executeQuery(query);
+            
+            /*
+            this.rs = res;
+            
+            rs.close();
+            conex.close();
+           */
+            
+            return res;
+            
 
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
@@ -56,10 +64,10 @@ public class Conexion {
     
         try {
             //Nueva conexion
-            Connection cone = this.getConexion();
+            Conexion cone = new Conexion();
   
             //creamos un estado de conexion
-            Statement st = cone.createStatement();
+            Statement st = cone.getConexion().createStatement();
             
             //Guardamos los datos con la query requerida
             st.execute(query);
@@ -73,6 +81,17 @@ public class Conexion {
     
     }
     
+    public void close(){
+    
+        try {
+            this.con.close();
+            this.con = null;
+        } catch (SQLException ex) {
+            Logger.getLogger(Conexion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    }
+      
 }
 
 
