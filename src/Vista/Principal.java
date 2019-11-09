@@ -1,6 +1,7 @@
 package Vista;
 
 import Modelo.Conexion;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,12 +17,13 @@ import javax.swing.table.DefaultTableModel;
 public class Principal extends javax.swing.JFrame {
 
     int idPartida;//para la funcion eliminar
-
+    
     public Principal() {
         initComponents();
         CargandoPartidas();
         btnModificar.setVisible(false);
         btnEliminar.setVisible(false);
+        LibroMayor();
     }
 
     @SuppressWarnings("unchecked")
@@ -47,16 +49,11 @@ public class Principal extends javax.swing.JFrame {
         jScrollPane6 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jLabel11 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
-        jLabel15 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
 
@@ -187,7 +184,7 @@ public class Principal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "N. Partida", "Descripcion", "Debe", "Haber", "Saldo"
+                "Fecha", "Detalle", "Debe", "Haber", "Saldo"
             }
         ));
         jScrollPane6.setViewportView(jTable1);
@@ -195,43 +192,42 @@ public class Principal extends javax.swing.JFrame {
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jLabel11.setText("Libro Mayor");
 
-        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel14.setText("TOTAL");
+        jButton1.setText("Actualizar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane6))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(244, 244, 244)
-                        .addComponent(jLabel11))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(272, 272, 272)
-                        .addComponent(jLabel14)
-                        .addGap(44, 44, 44)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap()
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(244, 244, 244)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(45, 45, 45))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel11)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1)
+                        .addGap(18, 18, 18)))
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22))
+                .addGap(60, 60, 60))
         );
 
         jTabbedPane1.addTab("Libro mayor", jPanel3);
@@ -249,9 +245,6 @@ public class Principal extends javax.swing.JFrame {
         ));
         jScrollPane7.setViewportView(jTable2);
 
-        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel15.setText("TOTAL");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -262,19 +255,9 @@ public class Principal extends javax.swing.JFrame {
                         .addGap(17, 17, 17)
                         .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(163, 163, 163)
-                                .addComponent(jLabel12))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(107, 107, 107)
-                                .addComponent(jLabel15)
-                                .addGap(55, 55, 55)
-                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(163, 163, 163)
+                        .addComponent(jLabel12)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -284,13 +267,7 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jLabel12)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel15)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Balance de comprobación", jPanel4);
@@ -394,8 +371,8 @@ public class Principal extends javax.swing.JFrame {
             ResultSet rs = null;
             ResultSet rs1 = null;
 
-            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + "",con.getConexion());
-            rs1 = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + idPartida + "",con.getConexion());
+            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + "", con.getConexion());
+            rs1 = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + idPartida + "", con.getConexion());
 
             while (rs.next()) {
                 String partida = "Partida " + rs.getString("id_partida");
@@ -407,9 +384,7 @@ public class Principal extends javax.swing.JFrame {
                 }
                 modelo.addRow(new Object[]{"", rs.getString("concepto"), "", ""});
                 agg.txtConcepto.setText(rs.getString("concepto"));
-                
-                
-                
+
             }
             con.close(); //aqui esta un close
             rs.close();
@@ -423,6 +398,10 @@ public class Principal extends javax.swing.JFrame {
         agg.setDefaultCloseOperation(agg.DISPOSE_ON_CLOSE);
 
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        LibroMayor();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -478,15 +457,16 @@ public class Principal extends javax.swing.JFrame {
         }
 
         Conexion con = new Conexion();
-        ResultSet rs = con.Consulta("SELECT * FROM `partida`",con.getConexion());//consulta
+        ResultSet rs = con.Consulta("SELECT * FROM `partida`", con.getConexion());//consulta
         try {
             while (rs.next()) {
                 modelo.addRow(new Object[]{rs.getString("fecha"), "Partida N. " + rs.getString("id_partida"), "", ""});
                 Conexion con1 = new Conexion();
-                ResultSet rs1 = con1.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "",con.getConexion());//consulta
+                ResultSet rs1 = con1.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "", con.getConexion());//consulta
                 try {
                     while (rs1.next()) {
                         modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
+
                     }
                     rs1.close();
                 } catch (SQLException ex) {
@@ -678,27 +658,27 @@ public class Principal extends javax.swing.JFrame {
             if (IVAremanente) {
                 if (debitoD > debitoH) {
                     System.out.println("es la primera");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (39," + ultimaPartida + "," + formato.format(remanente) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + ",0," + formato.format(totalD) + ");");
                 } else if (debitoD < debitoH) {
                     System.out.println("es la segunda");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (24," + ultimaPartida + "," + formato.format(remanente) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + "," + formato.format(totalD) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (39," + ultimaPartida + "," + formato.format(remanente) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + ",0," + formato.format(totalC) + ");");
                 }
 
             } else if (IVAimpuesto) {
                 if (debitoD > debitoH) {
                     System.out.println("es la tercera");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (167," + ultimaPartida + "," + formato.format(impuesto) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + ",0," + formato.format(totalD) + ");");
                 } else if (debitoD < debitoH) {
                     System.out.println("es la cuarta");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (22," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (21," + ultimaPartida + "," + formato.format(impuesto) + ",0)");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (23," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + "," + formato.format(totalD) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (167," + ultimaPartida + "," + formato.format(impuesto) + ",0)");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + ",0," + formato.format(totalC) + ");");
                 }
             }
             CargandoPartidas();
@@ -708,18 +688,125 @@ public class Principal extends javax.swing.JFrame {
 
     }
 
+    public void LibroMayor() {
+        Double contando = 0.0;
+        boolean esta = false;
+        String nivel3 = "";
+        String codigo = null;
+        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+        Conexion con = new Conexion();
+        ResultSet rs = null;
+
+        //vacia la tabla
+        while (modelo.getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+        
+        
+        rs = con.Consulta("SELECT cuenta.codigo FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id", con.getConexion());
+
+        try {
+            while (rs.next()) {
+                codigo = rs.getString(1);//obteniendo codigo
+                /*este for lo que hace es que solo obtenga a que cuenta de nivel 3 pertenece la cuenta obtenida
+                por la consulta de arriba, por ejemplo si es caja general sabriamos que es de efectivo y equivalente*/
+                for (int i = 0; i < 4; i++) {
+                    nivel3 += codigo.charAt(i);
+                }
+                Conexion con1 = new Conexion();
+                ResultSet rs1 = null;
+                rs1 = con1.Consulta("SELECT `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` = '" + nivel3 + "'", con1.getConexion());
+
+                if (rs1.next()) {
+
+                    Conexion con2 = new Conexion();
+                    ResultSet rs2 = null;
+                    rs2 = con2.Consulta("SELECT cuenta.codigo,partida.fecha,partida.concepto, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE cuenta.codigo LIKE '" + nivel3 + "%'", con2.getConexion());
+                    
+                    /*SI YA HAY UNA FILA EN LA TABLA ENTRA ACA SI NO LA HAY LA AGREGA EN EL ELSE*/
+                    if (modelo.getRowCount() > 0) {
+                        int a = 0;
+                        /*RECORREMOS LAS FILAS DE LA TABLA*/
+                        while (a < modelo.getRowCount()) {
+                            /*CON ESTO VERIFICAMOS QUE LA CUENTA DE NIVEL 3 QUE QUEREMOS METER NO ESTE DUPLICADA*/
+                            if (jTable1.getValueAt(a, 1).toString().equals(rs1.getString("nombre_cuenta"))) {
+                                esta = true;
+                                break;
+                            } else {
+                                esta = false;
+                            }
+                            a++;
+                        }
+                        /*SI LA CUENTA QUE QUEREMOS METER YA ESTA EN LA TABLA ENTONCES NO HACEMOS NADA DE LO CONTRARIO
+                        INGRESAMOS LA CUENTA*/
+                        if (esta) {
+                            //System.out.println("no la agrego");
+                        } else {
+                            modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), "", "", ""});
+                            esta = false;
+                            while (rs2.next()) {
+                                /*LA VARIABLE CONTANDO SIRVE PARA IR SUMANDO EL SALDO, PERO CON ESTO VALIDAMOS QUE NO
+                                SE ESTE SUMANDO UN CAMPO VACIO*/
+                                if (!jTable1.getValueAt(modelo.getRowCount() - 1, 4).toString().isEmpty()) {
+                                    contando = Double.parseDouble(jTable1.getValueAt(modelo.getRowCount() - 1, 4).toString());
+                                } else {
+                                    contando = 0.0;
+                                }
+
+                                if (rs1.getString("tipo_saldo").equals("Deudor")) {
+                                    modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Debe")) - Double.parseDouble(rs2.getString("Haber"))) + contando)});
+
+                                } else if (rs1.getString("tipo_saldo").equals("Acreedor")) {
+                                    modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Haber")) - Double.parseDouble(rs2.getString("Debe"))) + contando)});
+
+                                }
+                            }
+                        }
+
+                    } else {
+                        modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), "", "", ""});
+                        while (rs2.next()) {
+                            if (!jTable1.getValueAt(modelo.getRowCount() - 1, 4).toString().isEmpty()) {
+                                contando = Double.parseDouble(jTable1.getValueAt(modelo.getRowCount() - 1, 4).toString());
+                            } else {
+                                contando = 0.0;
+                            }
+
+                            if (rs1.getString("tipo_saldo").equals("Deudor")) {
+                                modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Debe")) - Double.parseDouble(rs2.getString("Haber"))) + contando)});
+
+                            } else if (rs1.getString("tipo_saldo").equals("Acreedor")) {
+                                modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Haber")) - Double.parseDouble(rs2.getString("Debe"))) + contando)});
+
+                            }
+                        }
+                    }
+                    con2.close();
+                    rs2.close();
+                }
+
+                //modelo.addRow(new Object[]{rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), ""});
+                con1.close();
+                rs1.close();
+                nivel3 = "";
+            }
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TableMostrarPartidas;
     public javax.swing.JButton btnAgregarPartida;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnModificar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -737,9 +824,5 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
 }
