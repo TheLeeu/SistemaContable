@@ -29,6 +29,7 @@ public class Principal extends javax.swing.JFrame {
         sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
         sumar(jTable2, 1, 2, jTextField3, jTextField4);
         EstadoResultados();
+        BalanceGeneral();
     }
 
     @SuppressWarnings("unchecked")
@@ -68,6 +69,18 @@ public class Principal extends javax.swing.JFrame {
         jTable3 = new javax.swing.JTable();
         jButton4 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable4 = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTable5 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jTextField6 = new javax.swing.JTextField();
+        jTextField7 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        jTextField8 = new javax.swing.JTextField();
+        jTextField9 = new javax.swing.JTextField();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -160,7 +173,7 @@ public class Principal extends javax.swing.JFrame {
                                 .addComponent(btnEliminar))
                             .addComponent(btnAgregarPartida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,7 +230,7 @@ public class Principal extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 615, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(244, 244, 244)
@@ -233,7 +246,7 @@ public class Principal extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)
@@ -273,7 +286,7 @@ public class Principal extends javax.swing.JFrame {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(17, 17, 17)
-                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 652, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(163, 163, 163)
@@ -302,7 +315,7 @@ public class Principal extends javax.swing.JFrame {
                         .addComponent(jButton2)
                         .addGap(7, 7, 7)))
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -341,7 +354,7 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton4)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -350,20 +363,108 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton4)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(144, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Estado de Resultados", jPanel5);
+
+        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ACTIVOS", "$"
+            }
+        ));
+        jScrollPane2.setViewportView(jTable4);
+
+        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "PASIVOS", "$"
+            }
+        ));
+        jScrollPane3.setViewportView(jTable5);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setText("BALANCE GENERAL");
+
+        jTextField5.setEnabled(false);
+
+        jTextField6.setEnabled(false);
+
+        jTextField7.setEnabled(false);
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel15.setText("TOTAL");
+
+        jButton5.setText("Actualizar");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 635, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(289, 289, 289)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
+                        .addComponent(jButton5)
+                        .addGap(87, 87, 87)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextField6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(94, 94, 94)
+                        .addComponent(jLabel15)
+                        .addGap(57, 57, 57)
+                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 511, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jButton5))
+                        .addGap(18, 18, 18))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(54, 54, 54))
         );
 
         jTabbedPane1.addTab("Balance General", jPanel6);
@@ -372,7 +473,7 @@ public class Principal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -481,6 +582,10 @@ public class Principal extends javax.swing.JFrame {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         EstadoResultados();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        BalanceGeneral();
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -942,7 +1047,7 @@ public class Principal extends javax.swing.JFrame {
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
-        
+
         Conexion con = new Conexion();
         ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '5%'", con.getConexion());
         try {
@@ -1010,8 +1115,105 @@ public class Principal extends javax.swing.JFrame {
         }
 
         modelo.addRow(new Object[]{"Utilidad Neta", formato.format((((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) - impuestos)});
+        /*utilidad neta*/
+        jTextField6.setText(formato.format((((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) - impuestos));
+        /*impuestos por pagar*/
+        jTextField5.setText(String.valueOf(formato.format(impuestos)));
+        /*reserva legal*/
+        jTextField7.setText(formato.format(((ingresos - costos) - gastos) * 0.07));
+    }
+
+    public void BalanceGeneral() {
+        DefaultTableModel activos = (DefaultTableModel) jTable4.getModel();
+        DefaultTableModel pasivos = (DefaultTableModel) jTable5.getModel();
+
+        //vaciamos las tablas
+        while (activos.getRowCount() > 0) {
+            activos.removeRow(0);
+        }
+        while (pasivos.getRowCount() > 0) {
+            pasivos.removeRow(0);
+        }
+
+        Conexion con = new Conexion();
+        ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '1%'", con.getConexion());
+
+        try {
+            activos.addRow(new Object[]{"ACTIVOS", "0"});
+            while (rs.next()) {
+                if (Double.parseDouble(rs.getString("Haber")) <= 0) {
+                    activos.addRow(new Object[]{rs.getString("nombre_cuenta"), rs.getString("Debe")});
+
+                } else if (Double.parseDouble(rs.getString("Haber")) > 0) {
+                    activos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Haber")))});
+
+                }
+            }
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Double sumActivos = 0.0;
+        //sumamos los activos
+        for (int i = 0; i < activos.getRowCount(); i++) {
+            sumActivos += Double.parseDouble(activos.getValueAt(i, 1).toString());
+        }
+        jTextField8.setText(formato.format(sumActivos));
+        //activos.addRow(new Object[]{"TOTAL ", formato.format(sumActivos)});
+
+        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '2%'", con.getConexion());
+        try {
+            pasivos.addRow(new Object[]{"PASIVOS ", "0"});
+
+            while (rs.next()) {
+                if (Double.parseDouble(rs.getString("Debe")) <= 0) {
+                    pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(Double.parseDouble(rs.getString("Haber")))});
+                } else if (Double.parseDouble(rs.getString("Debe")) > 0) {
+                    pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Debe")))});
+
+                }
+            }
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        pasivos.addRow(new Object[]{"IMPUESTOS POR PAGAR ", jTextField5.getText()});
+
+        pasivos.addRow(new Object[]{"PATRIMONIO ", "0"});
+
+        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '3%'", con.getConexion());
+        try {
+
+            while (rs.next()) {
+                if (Double.parseDouble(rs.getString("Debe")) <= 0) {
+                    pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(Double.parseDouble(rs.getString("Haber")))});
+                } else if (Double.parseDouble(rs.getString("Debe")) > 0) {
+                    pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Debe")))});
+
+                }
+            }
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        pasivos.addRow(new Object[]{"UTILIDAD NETA ", jTextField6.getText()});
+        pasivos.addRow(new Object[]{"RESERVA LEGAL ", jTextField7.getText()});
+
+        Double sumPasivos = 0.0;
+        //sumamos los pasivos
+        for (int i = 0; i < pasivos.getRowCount(); i++) {
+            sumPasivos += Double.parseDouble(pasivos.getValueAt(i, 1).toString());
+        }
+        jTextField9.setText(formato.format(sumPasivos));
+        //pasivos.addRow(new Object[]{"TOTAL ", formato.format(sumPasivos)});
 
     }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TableMostrarPartidas;
     public javax.swing.JButton btnAgregarPartida;
@@ -1021,10 +1223,13 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -1035,6 +1240,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
@@ -1042,9 +1249,16 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
+    private javax.swing.JTable jTable4;
+    private javax.swing.JTable jTable5;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    public javax.swing.JTextField jTextField5;
+    public javax.swing.JTextField jTextField6;
+    public javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField jTextField8;
+    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }
