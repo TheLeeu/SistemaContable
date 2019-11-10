@@ -17,13 +17,18 @@ import javax.swing.table.DefaultTableModel;
 public class Principal extends javax.swing.JFrame {
 
     int idPartida;//para la funcion eliminar
-    
+    DecimalFormat formato = new DecimalFormat("#.00");
+
     public Principal() {
         initComponents();
         CargandoPartidas();
         btnModificar.setVisible(false);
         btnEliminar.setVisible(false);
         LibroMayor();
+        BalanceComprobacion();
+        sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
+        sumar(jTable2, 1, 2, jTextField3, jTextField4);
+        EstadoResultados();
     }
 
     @SuppressWarnings("unchecked")
@@ -54,7 +59,14 @@ public class Principal extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
+        jButton2 = new javax.swing.JButton();
+        jLabel14 = new javax.swing.JLabel();
+        jTextField3 = new javax.swing.JTextField();
+        jTextField4 = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable3 = new javax.swing.JTable();
+        jButton4 = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -245,42 +257,100 @@ public class Principal extends javax.swing.JFrame {
         ));
         jScrollPane7.setViewportView(jTable2);
 
+        jButton2.setText("Actualizar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel14.setText("TOTAL");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(163, 163, 163)
-                        .addComponent(jLabel12)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGap(163, 163, 163)
+                .addComponent(jLabel12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addGap(43, 43, 43))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addGap(163, 163, 163)
+                .addComponent(jLabel14)
+                .addGap(57, 57, 57)
+                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(72, 72, 72)
+                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel12)
-                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(7, 7, 7)))
                 .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Balance de comprobación", jPanel4);
+
+        jTable3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable3);
+
+        jButton4.setText("Actualizar");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 635, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton4)
+                .addContainerGap(16, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 511, Short.MAX_VALUE)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton4)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Estado de Resultados", jPanel5);
@@ -353,7 +423,7 @@ public class Principal extends javax.swing.JFrame {
         if (EliminarPartidaBD()) {
             ModificarId(idPartida);
             CargandoPartidas();
-            sumar();
+            sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
         } else {
             JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR");
         }
@@ -402,6 +472,15 @@ public class Principal extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         LibroMayor();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        BalanceComprobacion();
+        sumar(jTable2, 1, 2, jTextField3, jTextField4);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        EstadoResultados();
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -473,7 +552,7 @@ public class Principal extends javax.swing.JFrame {
                     Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 modelo.addRow(new Object[]{"", "C/ " + rs.getString("concepto"), "", ""});
-                sumar();
+                sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
             }
             rs.close();
             con.close();
@@ -482,33 +561,34 @@ public class Principal extends javax.swing.JFrame {
         }
     }
 
-    public void sumar() {
+    public void sumar(javax.swing.JTable tabla, int columna1, int columna2, javax.swing.JTextField jt1, javax.swing.JTextField jt2) {
+
         double t1 = 0;
         double p1 = 0;
-        if (TableMostrarPartidas.getRowCount() > 1) {
-            for (int i = 0; i < TableMostrarPartidas.getRowCount(); i++) {
-                if (!TableMostrarPartidas.getValueAt(i, 2).toString().isEmpty()) {
-                    p1 = Double.parseDouble(TableMostrarPartidas.getValueAt(i, 2).toString());
+        if (tabla.getRowCount() > 1) {
+            for (int i = 0; i < tabla.getRowCount(); i++) {
+                if (!tabla.getValueAt(i, columna1).toString().isEmpty()) {
+                    p1 = Double.parseDouble(tabla.getValueAt(i, columna1).toString());
                     t1 += p1;
                 }
             }
-            jTextField1.setText(String.valueOf(t1));
+            jt1.setText(String.valueOf(formato.format(t1)));
         } else {
-            jTextField1.setText("");
+            jt1.setText("");
         }
 
         double t = 0;
         double p = 0;
-        if (TableMostrarPartidas.getRowCount() > 1) {
-            for (int i = 0; i < TableMostrarPartidas.getRowCount(); i++) {
-                if (!TableMostrarPartidas.getValueAt(i, 3).toString().isEmpty()) {
-                    p = Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
+        if (tabla.getRowCount() > 1) {
+            for (int i = 0; i < tabla.getRowCount(); i++) {
+                if (!tabla.getValueAt(i, columna2).toString().isEmpty()) {
+                    p = Double.parseDouble(tabla.getValueAt(i, columna2).toString());
                     t += p;
                 }
             }
-            jTextField2.setText(String.valueOf(t));
+            jt2.setText(String.valueOf(formato.format(t)));
         } else {
-            jTextField2.setText("");
+            jt2.setText("");
         }
 
     }
@@ -701,15 +781,14 @@ public class Principal extends javax.swing.JFrame {
         while (modelo.getRowCount() > 0) {
             modelo.removeRow(0);
         }
-        
-        
+
         rs = con.Consulta("SELECT cuenta.codigo FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id", con.getConexion());
 
         try {
             while (rs.next()) {
                 codigo = rs.getString(1);//obteniendo codigo
                 /*este for lo que hace es que solo obtenga a que cuenta de nivel 3 pertenece la cuenta obtenida
-                por la consulta de arriba, por ejemplo si es caja general sabriamos que es de efectivo y equivalente*/
+                 por la consulta de arriba, por ejemplo si es caja general sabriamos que es de efectivo y equivalente*/
                 for (int i = 0; i < 4; i++) {
                     nivel3 += codigo.charAt(i);
                 }
@@ -722,7 +801,7 @@ public class Principal extends javax.swing.JFrame {
                     Conexion con2 = new Conexion();
                     ResultSet rs2 = null;
                     rs2 = con2.Consulta("SELECT cuenta.codigo,partida.fecha,partida.concepto, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE cuenta.codigo LIKE '" + nivel3 + "%'", con2.getConexion());
-                    
+
                     /*SI YA HAY UNA FILA EN LA TABLA ENTRA ACA SI NO LA HAY LA AGREGA EN EL ELSE*/
                     if (modelo.getRowCount() > 0) {
                         int a = 0;
@@ -738,7 +817,7 @@ public class Principal extends javax.swing.JFrame {
                             a++;
                         }
                         /*SI LA CUENTA QUE QUEREMOS METER YA ESTA EN LA TABLA ENTONCES NO HACEMOS NADA DE LO CONTRARIO
-                        INGRESAMOS LA CUENTA*/
+                         INGRESAMOS LA CUENTA*/
                         if (esta) {
                             //System.out.println("no la agrego");
                         } else {
@@ -746,7 +825,7 @@ public class Principal extends javax.swing.JFrame {
                             esta = false;
                             while (rs2.next()) {
                                 /*LA VARIABLE CONTANDO SIRVE PARA IR SUMANDO EL SALDO, PERO CON ESTO VALIDAMOS QUE NO
-                                SE ESTE SUMANDO UN CAMPO VACIO*/
+                                 SE ESTE SUMANDO UN CAMPO VACIO*/
                                 if (!jTable1.getValueAt(modelo.getRowCount() - 1, 4).toString().isEmpty()) {
                                     contando = Double.parseDouble(jTable1.getValueAt(modelo.getRowCount() - 1, 4).toString());
                                 } else {
@@ -754,10 +833,10 @@ public class Principal extends javax.swing.JFrame {
                                 }
 
                                 if (rs1.getString("tipo_saldo").equals("Deudor")) {
-                                    modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Debe")) - Double.parseDouble(rs2.getString("Haber"))) + contando)});
+                                    modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), formato.format(((Double.parseDouble(rs2.getString("Debe")) - Double.parseDouble(rs2.getString("Haber"))) + contando))});
 
                                 } else if (rs1.getString("tipo_saldo").equals("Acreedor")) {
-                                    modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Haber")) - Double.parseDouble(rs2.getString("Debe"))) + contando)});
+                                    modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), formato.format(((Double.parseDouble(rs2.getString("Haber")) - Double.parseDouble(rs2.getString("Debe"))) + contando))});
 
                                 }
                             }
@@ -773,10 +852,10 @@ public class Principal extends javax.swing.JFrame {
                             }
 
                             if (rs1.getString("tipo_saldo").equals("Deudor")) {
-                                modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Debe")) - Double.parseDouble(rs2.getString("Haber"))) + contando)});
+                                modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), formato.format(((Double.parseDouble(rs2.getString("Debe")) - Double.parseDouble(rs2.getString("Haber"))) + contando))});
 
                             } else if (rs1.getString("tipo_saldo").equals("Acreedor")) {
-                                modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), ((Double.parseDouble(rs2.getString("Haber")) - Double.parseDouble(rs2.getString("Debe"))) + contando)});
+                                modelo.addRow(new Object[]{rs2.getString("fecha"), rs2.getString("concepto"), rs2.getString("Debe"), rs2.getString("Haber"), formato.format(((Double.parseDouble(rs2.getString("Haber")) - Double.parseDouble(rs2.getString("Debe"))) + contando))});
 
                             }
                         }
@@ -797,16 +876,155 @@ public class Principal extends javax.swing.JFrame {
         }
     }
 
+    public void BalanceComprobacion() {
+        int codigo;
+        DefaultTableModel modelo = (DefaultTableModel) jTable2.getModel();
+
+        //vacia la tabla
+        while (modelo.getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+
+        Conexion con = new Conexion();
+        ResultSet rs = con.Consulta("SELECT `codigo`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `Nivel` = 1 OR `Nivel` = 2", con.getConexion());
+        try {
+            while (rs.next()) {
+                codigo = Integer.parseInt(rs.getString("codigo"));
+
+                if (codigo == 1 || codigo == 2 || codigo == 31 || codigo == 5 || codigo == 41 || codigo == 42) {
+                    modelo.addRow(new Object[]{rs.getString("nombre_cuenta"), "", ""});
+                    Conexion co = new Conexion();
+                    ResultSet r = co.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE `codigo` Like '" + codigo + "%'", co.getConexion());
+
+                    while (r.next()) {
+                        if (rs.getString("tipo_saldo").equals("Deudor")) {
+                            if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
+                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+
+                            } else if (Double.parseDouble(r.getString("Haber")) > 0) {
+                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
+
+                            }
+                        } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
+                            if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
+                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+
+                            } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
+                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
+
+                            }
+
+                        }
+
+                    }
+
+                    co.close();
+                    r.close();
+                }
+
+            }
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void EstadoResultados() {
+        Double impuestos = null;
+        DefaultTableModel modelo = (DefaultTableModel) jTable3.getModel();
+        Double Debe = 0.00;
+        Double Haber = 0.00;
+        Double ingresos = 0.0;
+        Double costos = 0.0;
+        Double gastos = 0.0;
+        //vacia la tabla
+        while (modelo.getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+        
+        Conexion con = new Conexion();
+        ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '5%'", con.getConexion());
+        try {
+            while (rs.next()) {
+                Debe += Double.parseDouble(rs.getString("Debe"));
+                Haber += Double.parseDouble(rs.getString("Haber"));
+                ingresos = Haber - Debe;
+            }
+
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        modelo.addRow(new Object[]{"Ingresos", formato.format(ingresos)});
+
+        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '41%'", con.getConexion());
+        try {
+            Debe = 0.0;
+            Haber = 0.0;
+            while (rs.next()) {
+                Debe += Double.parseDouble(rs.getString("Debe"));
+                Haber += Double.parseDouble(rs.getString("Haber"));
+                costos = Debe - Haber;
+
+            }
+
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        modelo.addRow(new Object[]{"Costos", formato.format(costos)});
+        modelo.addRow(new Object[]{"Utilidad Bruta", formato.format(ingresos - costos)});
+
+        try {
+            rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE cuenta.codigo LIKE '42%'", con.getConexion());
+
+            Debe = 0.0;
+            Haber = 0.0;
+            while (rs.next()) {
+                Debe += Double.parseDouble(rs.getString("Debe"));
+                Haber += Double.parseDouble(rs.getString("Haber"));
+                gastos = Debe - Haber;
+            }
+
+            con.close();
+            rs.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        modelo.addRow(new Object[]{"Gastos de Operacion", formato.format(gastos)});
+        modelo.addRow(new Object[]{"Utilidad de Operacion", formato.format((ingresos - costos) - gastos)});
+
+        modelo.addRow(new Object[]{"Reserva Legal", formato.format(((ingresos - costos) - gastos) * 0.07)});
+        modelo.addRow(new Object[]{"Utilidad Antes de Impuestos", formato.format(((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07)});
+
+        if (ingresos > 150000) {
+            modelo.addRow(new Object[]{"Impuestos por Pagar", formato.format((((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) * 0.3)});
+            impuestos = (((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) * 0.3;
+        } else if (ingresos < 150000) {
+            modelo.addRow(new Object[]{"Impuestos por Pagar", formato.format((((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) * 0.25)});
+            impuestos = (((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) * 0.25;
+        }
+
+        modelo.addRow(new Object[]{"Utilidad Neta", formato.format((((ingresos - costos) - gastos) - ((ingresos - costos) - gastos) * 0.07) - impuestos)});
+
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable TableMostrarPartidas;
     public javax.swing.JButton btnAgregarPartida;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -816,13 +1034,17 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable3;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }
