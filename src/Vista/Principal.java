@@ -528,6 +528,8 @@ public class Principal extends javax.swing.JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR");
         }
+        btnEliminar.setVisible(false);
+        btnModificar.setVisible(false);
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -857,12 +859,12 @@ public class Principal extends javax.swing.JFrame {
                 if (debitoD > debitoH) {
                     System.out.println("es la tercera");
                     insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (167," + ultimaPartida + "," + formato.format(impuesto) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (146," + ultimaPartida + ",0," + formato.format(impuesto) + ");");
                     insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + ",0," + formato.format(totalD) + ");");
                 } else if (debitoD < debitoH) {
                     System.out.println("es la cuarta");
                     insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (167," + ultimaPartida + "," + formato.format(impuesto) + ",0)");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (146," + ultimaPartida + ",0," + formato.format(impuesto) + ")");
                     insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + ",0," + formato.format(totalC) + ");");
                 }
             }
