@@ -570,7 +570,9 @@ public class Principal extends javax.swing.JFrame {
         agg.btnModificar.setVisible(true);
         agg.setVisible(true);
         agg.setDefaultCloseOperation(agg.DISPOSE_ON_CLOSE);
-
+        
+        btnModificar.setVisible(false);
+        btnEliminar.setVisible(false);
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -1280,7 +1282,7 @@ public class Principal extends javax.swing.JFrame {
                     //vemos si ya esta registrada
                     for (int i = 0; i < pasivos.getRowCount(); i++) {
                         if (pasivos.getValueAt(i, 0).toString().equals(rs.getString("nombre_cuenta"))) {
-                            System.out.println(pasivos.getValueAt(i, 0).toString()+ " = "+rs.getString("nombre_cuenta") );
+                            //System.out.println(pasivos.getValueAt(i, 0).toString()+ " = "+rs.getString("nombre_cuenta") );
                             saldo = Double.parseDouble(pasivos.getValueAt(i, 1).toString());
 
                             if (Double.parseDouble(rs.getString("Debe")) <= 0) {
