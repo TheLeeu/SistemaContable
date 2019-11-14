@@ -460,10 +460,11 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel15)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel15)
+                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(54, 54, 54))
         );
 
@@ -473,7 +474,7 @@ public class Principal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -984,6 +985,9 @@ public class Principal extends javax.swing.JFrame {
     }
 
     public void BalanceComprobacion() {
+        boolean ya = false;
+        Double sD = 0.0;
+        Double sH = 0.0;
         int codigo;
         DefaultTableModel modelo = (DefaultTableModel) jTable2.getModel();
 
@@ -1004,23 +1008,84 @@ public class Principal extends javax.swing.JFrame {
                     ResultSet r = co.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE `codigo` Like '" + codigo + "%'", co.getConexion());
 
                     while (r.next()) {
-                        if (rs.getString("tipo_saldo").equals("Deudor")) {
-                            if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
-                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+                        if (modelo.getRowCount() == 1) {
+                            if (rs.getString("tipo_saldo").equals("Deudor")) {
+                                if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
+                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), formato.format(Double.parseDouble(r.getString("Debe"))), formato.format(Double.parseDouble(r.getString("Haber")))});
 
-                            } else if (Double.parseDouble(r.getString("Haber")) > 0) {
-                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
+                                } else if (Double.parseDouble(r.getString("Haber")) > 0) {
+                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(r.getString("Haber"))), "0"});
+
+                                }
+                            } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
+                                if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
+                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), formato.format(r.getString("Debe")), formato.format(r.getString("Haber"))});
+
+                                } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
+                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", formato.format(0 - Double.parseDouble(r.getString("Debe")))});
+
+                                }
 
                             }
-                        } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
-                            if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
-                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+                        } else if (modelo.getRowCount() > 1) {
+                            //ver si hay cuentas parecidas
+                            for (int g = 0; g < modelo.getRowCount(); g++) {
+                                if (modelo.getValueAt(g, 0).toString().equals(r.getString("nombre_cuenta"))) {
+                                    //System.out.println(modelo.getValueAt(g, 0).toString() + " = " + r.getString("nombre_cuenta"));
+                                    sD = Double.parseDouble(modelo.getValueAt(g, 1).toString());
+                                    sH = Double.parseDouble(modelo.getValueAt(g, 2).toString());
+                                    //String cuenta = modelo.getValueAt(g, 0).toString();
 
-                            } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
-                                modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
+                                    if (rs.getString("tipo_saldo").equals("Deudor")) {
+                                        if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
+                                            modelo.setValueAt(formato.format(sD += Double.parseDouble(r.getString("Debe"))), g, 1);
+                                            //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
+                                        } else if (Double.parseDouble(r.getString("Haber")) > 0) {
+                                            modelo.setValueAt(formato.format(sD += 0 - Double.parseDouble(r.getString("Haber"))), g, 1);
+                                            //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
+
+                                        }
+                                    } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
+                                        if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
+                                            modelo.setValueAt(formato.format(sH += Double.parseDouble(r.getString("Haber"))), g, 2);
+                                            //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+
+                                        } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
+                                            modelo.setValueAt(formato.format(sH += 0 - Double.parseDouble(r.getString("Debe"))), g, 2);
+                                            //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
+
+                                        }
+
+                                    }
+
+                                    ya = true;
+                                    break;
+                                } else {
+                                    ya = false;
+                                }
                             }
 
+                            if (!ya) {
+                                if (rs.getString("tipo_saldo").equals("Deudor")) {
+                                    if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
+                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+
+                                    } else if (Double.parseDouble(r.getString("Haber")) > 0) {
+                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
+
+                                    }
+                                } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
+                                    if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
+                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+
+                                    } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
+                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
+
+                                    }
+
+                                }
+                            }
                         }
 
                     }
@@ -1140,15 +1205,50 @@ public class Principal extends javax.swing.JFrame {
         Conexion con = new Conexion();
         ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '1%'", con.getConexion());
 
+        Double saldo = 0.0;
+        boolean ya = false;
         try {
             activos.addRow(new Object[]{"ACTIVOS", "0"});
             while (rs.next()) {
-                if (Double.parseDouble(rs.getString("Haber")) <= 0) {
-                    activos.addRow(new Object[]{rs.getString("nombre_cuenta"), rs.getString("Debe")});
+                if (activos.getRowCount() == 1) {
+                    if (Double.parseDouble(rs.getString("Haber")) <= 0) {
+                        activos.addRow(new Object[]{rs.getString("nombre_cuenta"), rs.getString("Debe")});
 
-                } else if (Double.parseDouble(rs.getString("Haber")) > 0) {
-                    activos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Haber")))});
+                    } else if (Double.parseDouble(rs.getString("Haber")) > 0) {
+                        activos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Haber")))});
 
+                    }
+                } else if (activos.getRowCount() > 1) {
+                    //vemos si la cuenta no esta ingresada
+                    for (int i = 0; i < activos.getRowCount(); i++) {
+                        if (activos.getValueAt(i, 0).toString().equals(rs.getString("nombre_cuenta"))) {
+                            saldo = Double.parseDouble(activos.getValueAt(i, 1).toString());
+
+                            if (Double.parseDouble(rs.getString("Haber")) <= 0) {
+                                activos.setValueAt(formato.format(saldo += Double.parseDouble(rs.getString("Debe"))), i, 1);
+                                //activos.addRow(new Object[]{rs.getString("nombre_cuenta"), rs.getString("Debe")});
+
+                            } else if (Double.parseDouble(rs.getString("Haber")) > 0) {
+                                activos.setValueAt(formato.format(saldo += 0 - Double.parseDouble(rs.getString("Haber"))), i, 1);
+
+                                //activos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Haber")))});
+                            }
+                            ya = true;
+                            break;
+                        } else {
+                            ya = false;
+                        }
+                    }
+
+                    if (!ya) {
+                        if (Double.parseDouble(rs.getString("Haber")) <= 0) {
+                            activos.addRow(new Object[]{rs.getString("nombre_cuenta"), rs.getString("Debe")});
+
+                        } else if (Double.parseDouble(rs.getString("Haber")) > 0) {
+                            activos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Haber")))});
+
+                        }
+                    }
                 }
             }
             con.close();
@@ -1169,11 +1269,43 @@ public class Principal extends javax.swing.JFrame {
             pasivos.addRow(new Object[]{"PASIVOS ", "0"});
 
             while (rs.next()) {
-                if (Double.parseDouble(rs.getString("Debe")) <= 0) {
-                    pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(Double.parseDouble(rs.getString("Haber")))});
-                } else if (Double.parseDouble(rs.getString("Debe")) > 0) {
-                    pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Debe")))});
+                if (pasivos.getRowCount() == 1) {
+                    if (Double.parseDouble(rs.getString("Debe")) <= 0) {
+                        pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(Double.parseDouble(rs.getString("Haber")))});
+                    } else if (Double.parseDouble(rs.getString("Debe")) > 0) {
+                        pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Debe")))});
 
+                    }
+                } else if (pasivos.getRowCount() > 1) {
+                    //vemos si ya esta registrada
+                    for (int i = 0; i < pasivos.getRowCount(); i++) {
+                        if (pasivos.getValueAt(i, 0).toString().equals(rs.getString("nombre_cuenta"))) {
+                            System.out.println(pasivos.getValueAt(i, 0).toString()+ " = "+rs.getString("nombre_cuenta") );
+                            saldo = Double.parseDouble(pasivos.getValueAt(i, 1).toString());
+
+                            if (Double.parseDouble(rs.getString("Debe")) <= 0) {
+                                pasivos.setValueAt(formato.format(saldo += Double.parseDouble(rs.getString("Haber"))), i, 1);
+                                //pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(Double.parseDouble(rs.getString("Haber")))});
+                            } else if (Double.parseDouble(rs.getString("Debe")) > 0) {
+                                pasivos.setValueAt(formato.format(saldo += 0 - Double.parseDouble(rs.getString("Debe"))), i, 1);
+                                // pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Debe")))});
+
+                            }
+
+                            ya = true;
+                            break;
+                        } else {
+                            ya = false;
+                        }
+                    }
+                    if (!ya) {
+                        if (Double.parseDouble(rs.getString("Debe")) <= 0) {
+                            pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(Double.parseDouble(rs.getString("Haber")))});
+                        } else if (Double.parseDouble(rs.getString("Debe")) > 0) {
+                            pasivos.addRow(new Object[]{rs.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(rs.getString("Debe")))});
+
+                        }
+                    }
                 }
             }
             con.close();

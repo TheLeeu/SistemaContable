@@ -398,6 +398,30 @@ public class AgregarPartida extends javax.swing.JFrame {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `tipo_saldo` = '"+jTextField3.getText().toString()+"'");
             cbxLista.setPopupVisible(true);
         }
+        if(jTextField3.getText().toString().equals("ACTIVO") || jTextField3.getText().toString().equals("Activo") ||jTextField3.getText().toString().equals("activo")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '1%'");
+            cbxLista.setPopupVisible(true);
+        }
+        if(jTextField3.getText().toString().equals("PASIVO") || jTextField3.getText().toString().equals("Pasivo") ||jTextField3.getText().toString().equals("pasivo")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '2%'");
+            cbxLista.setPopupVisible(true);
+        }
+        if(jTextField3.getText().toString().equals("CAPITAL") || jTextField3.getText().toString().equals("Capital") ||jTextField3.getText().toString().equals("capital")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '3%'");
+            cbxLista.setPopupVisible(true);
+        }
+        if(jTextField3.getText().toString().equals("INGRESOS") || jTextField3.getText().toString().equals("Ingresos") ||jTextField3.getText().toString().equals("ingresos")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '5%'");
+            cbxLista.setPopupVisible(true);
+        }
+        if(jTextField3.getText().toString().equals("COSTOS") || jTextField3.getText().toString().equals("Costos") ||jTextField3.getText().toString().equals("costos")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '41%'");
+            cbxLista.setPopupVisible(true);
+        }
+        if(jTextField3.getText().toString().equals("GASTOS") || jTextField3.getText().toString().equals("Gastos") ||jTextField3.getText().toString().equals("gastos")){
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '42%'");
+            cbxLista.setPopupVisible(true);
+        }
         
     }//GEN-LAST:event_jTextField3KeyTyped
 
@@ -525,6 +549,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     }
 
     public void cargarLista(String query) {
+        
         int nivel;
         int otro_nivel;
         try {
@@ -540,16 +565,8 @@ public class AgregarPartida extends javax.swing.JFrame {
             while (rs.next()) {
                 nivel = Integer.parseInt(rs.getString(3));
                 if (nivel > 2) {
+                    
                     cbxLista.addItem(rs.getString(4));
-                } else if (nivel <= 2) {
-                    otro_nivel = Integer.parseInt(rs.getString(2));
-                    rs1 = conecta.Consulta("SELECT `codigo`, `Nivel`, `nombre_cuenta` FROM `cuenta` WHERE `codigo` LIKE '" + otro_nivel + "%'",conecta.getConexion());
-                    while (rs1.next()) {
-                        nivel = Integer.parseInt(rs1.getString(2));
-                        if (nivel > 2) {
-                            cbxLista.addItem(rs1.getString(3));
-                        }
-                    }
                 }
             }
             //cerramos la conexion cerrando el resultado obtenido
