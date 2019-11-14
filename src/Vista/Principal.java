@@ -26,8 +26,8 @@ public class Principal extends javax.swing.JFrame {
         btnEliminar.setVisible(false);
         LibroMayor();
         BalanceComprobacion();
-        sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
-        sumar(jTable2, 1, 2, jTextField3, jTextField4);
+        sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
+        sumar(jTable2, 2, 3, jTextField3, jTextField4);
         EstadoResultados();
         BalanceGeneral();
     }
@@ -101,7 +101,7 @@ public class Principal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Fecha", "Descripcion", "Debe", "Haber"
+                "Fecha", "Codigo", "Descripcion", "Debe", "Haber"
             }
         ));
         TableMostrarPartidas.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -265,7 +265,7 @@ public class Principal extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Cuentas", "Debe", "Haber"
+                "Codigo", "Cuentas", "Debe", "Haber"
             }
         ));
         jScrollPane7.setViewportView(jTable2);
@@ -500,7 +500,7 @@ public class Principal extends javax.swing.JFrame {
         int i = 1;//contador
         int Fila = TableMostrarPartidas.getSelectedRow();//obtengo el numero de fila seleccionada
         int Col = TableMostrarPartidas.getRowCount();//obtengo el numero total de filas que hay en la tabla
-        String nPartida = TableMostrarPartidas.getValueAt(Fila, 1).toString();//Obtener la el texto de la celda seleccionada
+        String nPartida = TableMostrarPartidas.getValueAt(Fila, 2).toString();//Obtener la el texto de la celda seleccionada
         String busqueda = "Partida N. ";//esta variable la utilizaremos para saber cual es el numero de partida
         while (Col > 0) {
             //aqui hacemos una validacion para saber cual es el numero de la partida que se a seleccionado
@@ -525,7 +525,7 @@ public class Principal extends javax.swing.JFrame {
         if (EliminarPartidaBD()) {
             ModificarId(idPartida);
             CargandoPartidas();
-            sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
+            sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
         } else {
             JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR");
         }
@@ -581,7 +581,7 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         BalanceComprobacion();
-        sumar(jTable2, 1, 2, jTextField3, jTextField4);
+        sumar(jTable2, 2, 3, jTextField3, jTextField4);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
@@ -639,7 +639,7 @@ public class Principal extends javax.swing.JFrame {
         }
 
         //tamaño de las columnas
-        int[] anchos = {50, 200, 50, 50};
+        int[] anchos = {40,40, 200, 50, 50};
 
         for (int i = 0; i < modelo.getColumnCount(); i++) {
             TableMostrarPartidas.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
@@ -649,20 +649,20 @@ public class Principal extends javax.swing.JFrame {
         ResultSet rs = con.Consulta("SELECT * FROM `partida`", con.getConexion());//consulta
         try {
             while (rs.next()) {
-                modelo.addRow(new Object[]{rs.getString("fecha"), "Partida N. " + rs.getString("id_partida"), "", ""});
+                modelo.addRow(new Object[]{rs.getString("fecha"),"", "Partida N. " + rs.getString("id_partida"), "", ""});
                 Conexion con1 = new Conexion();
-                ResultSet rs1 = con1.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "", con.getConexion());//consulta
+                ResultSet rs1 = con1.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "", con.getConexion());//consulta
                 try {
                     while (rs1.next()) {
-                        modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
+                        modelo.addRow(new Object[]{"",rs1.getString("codigo"), rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
 
                     }
                     rs1.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                modelo.addRow(new Object[]{"", "C/ " + rs.getString("concepto"), "", ""});
-                sumar(TableMostrarPartidas, 2, 3, jTextField1, jTextField2);
+                modelo.addRow(new Object[]{"","", "C/ " + rs.getString("concepto"), "", ""});
+                sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
             }
             rs.close();
             con.close();
@@ -785,12 +785,12 @@ public class Principal extends javax.swing.JFrame {
         boolean IVAimpuesto = false;
         for (int i = 0; i < nFilas; i++) {
             /*dentro de este for vamos a tomar los valores del DFI/CFI y separar respectivamente si esta en el debe o haber*/
-            if (TableMostrarPartidas.getValueAt(i, 1).toString().equals("Debito Fiscal IVA")) {
-                debitoD += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 2).toString());
-                debitoH += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
-            } else if (TableMostrarPartidas.getValueAt(i, 1).toString().equals("Credito Fiscal IVA")) {
-                creditoD += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 2).toString());
-                creditoH += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
+            if (TableMostrarPartidas.getValueAt(i, 2).toString().equals("Debito Fiscal IVA")) {
+                debitoD += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
+                debitoH += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 4).toString());
+            } else if (TableMostrarPartidas.getValueAt(i, 2).toString().equals("Credito Fiscal IVA")) {
+                creditoD += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 3).toString());
+                creditoH += Double.parseDouble(TableMostrarPartidas.getValueAt(i, 4).toString());
             }
         }
 
@@ -1005,26 +1005,26 @@ public class Principal extends javax.swing.JFrame {
                 codigo = Integer.parseInt(rs.getString("codigo"));
 
                 if (codigo == 1 || codigo == 2 || codigo == 31 || codigo == 5 || codigo == 41 || codigo == 42) {
-                    modelo.addRow(new Object[]{rs.getString("nombre_cuenta"), "", ""});
+                    modelo.addRow(new Object[]{"",rs.getString("nombre_cuenta"), "", ""});
                     Conexion co = new Conexion();
-                    ResultSet r = co.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE `codigo` Like '" + codigo + "%'", co.getConexion());
+                    ResultSet r = co.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE `codigo` Like '" + codigo + "%'", co.getConexion());
 
                     while (r.next()) {
                         if (modelo.getRowCount() == 1) {
                             if (rs.getString("tipo_saldo").equals("Deudor")) {
                                 if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
-                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), formato.format(Double.parseDouble(r.getString("Debe"))), formato.format(Double.parseDouble(r.getString("Haber")))});
+                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), formato.format(Double.parseDouble(r.getString("Debe"))), formato.format(Double.parseDouble(r.getString("Haber")))});
 
                                 } else if (Double.parseDouble(r.getString("Haber")) > 0) {
-                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(r.getString("Haber"))), "0"});
+                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(r.getString("Haber"))), "0"});
 
                                 }
                             } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
                                 if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
-                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), formato.format(r.getString("Debe")), formato.format(r.getString("Haber"))});
+                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), formato.format(r.getString("Debe")), formato.format(r.getString("Haber"))});
 
                                 } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
-                                    modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", formato.format(0 - Double.parseDouble(r.getString("Debe")))});
+                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), "0", formato.format(0 - Double.parseDouble(r.getString("Debe")))});
 
                                 }
 
@@ -1032,29 +1032,29 @@ public class Principal extends javax.swing.JFrame {
                         } else if (modelo.getRowCount() > 1) {
                             //ver si hay cuentas parecidas
                             for (int g = 0; g < modelo.getRowCount(); g++) {
-                                if (modelo.getValueAt(g, 0).toString().equals(r.getString("nombre_cuenta"))) {
+                                if (modelo.getValueAt(g, 0).toString().equals(r.getString("codigo"))) {
                                     //System.out.println(modelo.getValueAt(g, 0).toString() + " = " + r.getString("nombre_cuenta"));
-                                    sD = Double.parseDouble(modelo.getValueAt(g, 1).toString());
-                                    sH = Double.parseDouble(modelo.getValueAt(g, 2).toString());
+                                    sD = Double.parseDouble(modelo.getValueAt(g, 2).toString());
+                                    sH = Double.parseDouble(modelo.getValueAt(g, 3).toString());
                                     //String cuenta = modelo.getValueAt(g, 0).toString();
 
                                     if (rs.getString("tipo_saldo").equals("Deudor")) {
                                         if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
-                                            modelo.setValueAt(formato.format(sD += Double.parseDouble(r.getString("Debe"))), g, 1);
+                                            modelo.setValueAt(formato.format(sD += Double.parseDouble(r.getString("Debe"))), g, 2);
                                             //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
                                         } else if (Double.parseDouble(r.getString("Haber")) > 0) {
-                                            modelo.setValueAt(formato.format(sD += 0 - Double.parseDouble(r.getString("Haber"))), g, 1);
+                                            modelo.setValueAt(formato.format(sD += 0 - Double.parseDouble(r.getString("Haber"))), g, 2);
                                             //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
 
                                         }
                                     } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
                                         if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
-                                            modelo.setValueAt(formato.format(sH += Double.parseDouble(r.getString("Haber"))), g, 2);
+                                            modelo.setValueAt(formato.format(sH += Double.parseDouble(r.getString("Haber"))), g, 3);
                                             //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
                                         } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
-                                            modelo.setValueAt(formato.format(sH += 0 - Double.parseDouble(r.getString("Debe"))), g, 2);
+                                            modelo.setValueAt(formato.format(sH += 0 - Double.parseDouble(r.getString("Debe"))), g, 3);
                                             //modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
 
                                         }
@@ -1071,18 +1071,18 @@ public class Principal extends javax.swing.JFrame {
                             if (!ya) {
                                 if (rs.getString("tipo_saldo").equals("Deudor")) {
                                     if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
-                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
                                     } else if (Double.parseDouble(r.getString("Haber")) > 0) {
-                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
+                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
 
                                     }
                                 } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
                                     if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
-                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
                                     } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
-                                        modelo.addRow(new Object[]{r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
+                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
 
                                     }
 

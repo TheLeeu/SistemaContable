@@ -33,6 +33,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         cargarNPartida();  //funcion que cargara el numero de partida que halla
         btnExento.setSelected(true);
         OcultarDC();
+        jButton1.setEnabled(false);
 
     }
 
@@ -102,7 +103,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Fecha", "Concepto", "Debe", "Haber"
+                "Fecha", "Codigo", "Concepto", "Debe", "Haber"
             }
         ));
         tablePartidaPreview.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -153,6 +154,12 @@ public class AgregarPartida extends javax.swing.JFrame {
         jTextField3.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 jTextField3KeyTyped(evt);
+            }
+        });
+
+        cbxLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxListaActionPerformed(evt);
             }
         });
 
@@ -381,7 +388,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     private void jTextField3KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField3KeyTyped
 
         char validar = evt.getKeyChar();//obtiene el caracter de la tecla que presiona el usuario
-        
+
         if (Character.isLetter(validar)) {
             cargarLista("SELECT * FROM `cuenta` WHERE `nombre_cuenta` LIKE '" + jTextField3.getText() + "%';");
             cbxLista.setPopupVisible(true);
@@ -389,40 +396,40 @@ public class AgregarPartida extends javax.swing.JFrame {
             cargarLista("SELECT * FROM `cuenta` WHERE `codigo` = '" + jTextField3.getText() + "';");
             cbxLista.setPopupVisible(true);
         }
-        
-        if(jTextField3.getText().toString().isEmpty()){
+
+        if (jTextField3.getText().toString().isEmpty()) {
             cargarLista("SELECT * FROM `cuenta`;");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("Deudor") || jTextField3.getText().toString().equals("Acreedor")){
-            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `tipo_saldo` = '"+jTextField3.getText().toString()+"'");
+        if (jTextField3.getText().toString().equals("Deudor") || jTextField3.getText().toString().equals("Acreedor")) {
+            cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `tipo_saldo` = '" + jTextField3.getText().toString() + "'");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("ACTIVO") || jTextField3.getText().toString().equals("Activo") ||jTextField3.getText().toString().equals("activo")){
+        if (jTextField3.getText().toString().equals("ACTIVO") || jTextField3.getText().toString().equals("Activo") || jTextField3.getText().toString().equals("activo")) {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '1%'");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("PASIVO") || jTextField3.getText().toString().equals("Pasivo") ||jTextField3.getText().toString().equals("pasivo")){
+        if (jTextField3.getText().toString().equals("PASIVO") || jTextField3.getText().toString().equals("Pasivo") || jTextField3.getText().toString().equals("pasivo")) {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '2%'");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("CAPITAL") || jTextField3.getText().toString().equals("Capital") ||jTextField3.getText().toString().equals("capital")){
+        if (jTextField3.getText().toString().equals("CAPITAL") || jTextField3.getText().toString().equals("Capital") || jTextField3.getText().toString().equals("capital")) {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '3%'");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("INGRESOS") || jTextField3.getText().toString().equals("Ingresos") ||jTextField3.getText().toString().equals("ingresos")){
+        if (jTextField3.getText().toString().equals("INGRESOS") || jTextField3.getText().toString().equals("Ingresos") || jTextField3.getText().toString().equals("ingresos")) {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '5%'");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("COSTOS") || jTextField3.getText().toString().equals("Costos") ||jTextField3.getText().toString().equals("costos")){
+        if (jTextField3.getText().toString().equals("COSTOS") || jTextField3.getText().toString().equals("Costos") || jTextField3.getText().toString().equals("costos")) {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '41%'");
             cbxLista.setPopupVisible(true);
         }
-        if(jTextField3.getText().toString().equals("GASTOS") || jTextField3.getText().toString().equals("Gastos") ||jTextField3.getText().toString().equals("gastos")){
+        if (jTextField3.getText().toString().equals("GASTOS") || jTextField3.getText().toString().equals("Gastos") || jTextField3.getText().toString().equals("gastos")) {
             cargarLista("SELECT `id_cuenta`, `codigo`, `Nivel`, `nombre_cuenta`, `tipo_saldo` FROM `cuenta` WHERE `codigo` LIKE '42%'");
             cbxLista.setPopupVisible(true);
         }
-        
+
     }//GEN-LAST:event_jTextField3KeyTyped
 
     private void btn_eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_eliminarActionPerformed
@@ -432,6 +439,10 @@ public class AgregarPartida extends javax.swing.JFrame {
         }
         //si al eliminar las cuentas seleccionadas (false) me da error
         btn_eliminar.setEnabled(false);
+
+        if (tablePartidaPreview.getRowCount() <= 2) {
+            jButton1.setEnabled(false);
+        }
 
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_eliminarActionPerformed
@@ -512,6 +523,10 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnModificarActionPerformed
 
+    private void cbxListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxListaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxListaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -549,14 +564,14 @@ public class AgregarPartida extends javax.swing.JFrame {
     }
 
     public void cargarLista(String query) {
-        
+
         int nivel;
         int otro_nivel;
         try {
             //Nueva conexion
             Conexion conecta = new Conexion();
             ResultSet rs, rs1;
-            rs = conecta.Consulta(query,conecta.getConexion());
+            rs = conecta.Consulta(query, conecta.getConexion());
 
             //removemos todo del combo box
             cbxLista.removeAllItems();
@@ -565,15 +580,14 @@ public class AgregarPartida extends javax.swing.JFrame {
             while (rs.next()) {
                 nivel = Integer.parseInt(rs.getString(3));
                 if (nivel > 2) {
-                    
-                    cbxLista.addItem(rs.getString(4));
+
+                    cbxLista.addItem(rs.getString(4) + rs.getString(2));
                 }
             }
             //cerramos la conexion cerrando el resultado obtenido
-            
+
             rs.close();
             conecta.close();
-            
 
         } catch (SQLException ex) {
             Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
@@ -586,13 +600,13 @@ public class AgregarPartida extends javax.swing.JFrame {
         //mientras la tabla tenga mas de un dato
         if (tablePartidaPreview.getRowCount() > 1) {
             for (int i = 0; i < tablePartidaPreview.getRowCount(); i++) {
-                if (!tablePartidaPreview.getValueAt(i, 2).toString().isEmpty()) {
-                    p = Double.parseDouble(tablePartidaPreview.getValueAt(i, 2).toString());
+                if (!tablePartidaPreview.getValueAt(i, 3).toString().isEmpty()) {
+                    p = Double.parseDouble(tablePartidaPreview.getValueAt(i, 3).toString());
                     t += p;
 
                     if (i < tablePartidaPreview.getRowCount() - 1) {
 
-                        if (tablePartidaPreview.getValueAt(i + 1, 2).toString().isEmpty()) { //si la siguiente celda esta vacia
+                        if (tablePartidaPreview.getValueAt(i + 1, 3).toString().isEmpty()) { //si la siguiente celda esta vacia
                             this.UltimaDebe = i + 1; //entonces esta es la ultima cuenta del debe
                         }
 
@@ -609,8 +623,8 @@ public class AgregarPartida extends javax.swing.JFrame {
         double p1 = 0;
         if (tablePartidaPreview.getRowCount() > 1) {
             for (int i = 0; i < tablePartidaPreview.getRowCount(); i++) {
-                if (!tablePartidaPreview.getValueAt(i, 3).toString().isEmpty()) {
-                    p1 = Double.parseDouble(tablePartidaPreview.getValueAt(i, 3).toString());
+                if (!tablePartidaPreview.getValueAt(i, 4).toString().isEmpty()) {
+                    p1 = Double.parseDouble(tablePartidaPreview.getValueAt(i, 4).toString());
                     t1 += p1;
                 }
             }
@@ -620,6 +634,10 @@ public class AgregarPartida extends javax.swing.JFrame {
     }
 
     public void preview() {
+        String combo = "";
+        String cuenta = "";
+        String cod = "";
+        char c;
         if (!(txtModif.getText().toString().isEmpty())) {
             txtNPartida.setText(txtModif.getText());
             Encabezado = true;
@@ -630,70 +648,216 @@ public class AgregarPartida extends javax.swing.JFrame {
             DH_seleccionado = true;
         }
         if ((!txtNPartida.getText().toString().isEmpty()) && (!txtFecha.getText().toString().isEmpty()) && (!txtSaldo.getText().toString().isEmpty()) && (DH_seleccionado) && (!txtConcepto.getText().toString().isEmpty())) {
-            DecimalFormat formato = new DecimalFormat("#.00");
-            DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
+            if (Double.parseDouble(txtSaldo.getText().toString()) > 0.0) {//saldo mayor a 0.0
+                DecimalFormat formato = new DecimalFormat("#.00");
+                DefaultTableModel _Modelo = (DefaultTableModel) tablePartidaPreview.getModel();
 
-            if (tablePartidaPreview.getRowCount() == 0 || !Encabezado) {
-                //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
-                _Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
-                Encabezado = true;
-            } else if (Concepto) {
-                _Modelo.removeRow(_Modelo.getRowCount() - 1);
-            }
+                if (tablePartidaPreview.getRowCount() == 0 || !Encabezado) {
+                    //_Modelo.addRow(new Object[]{txtFecha.getText(), "Partida " + txtNPartida.getText(), "", ""});
+                    _Modelo.addRow(new Object[]{txtFecha.getText(), "", "Partida " + txtNPartida.getText(), "", ""});
+                    Encabezado = true;
+                } else if (Concepto) {
+                    _Modelo.removeRow(_Modelo.getRowCount() - 1);
+                }
 
-            if (btn_debe.isSelected()) {
-                if (btnMasIVA.isSelected()) {
+                if (btn_debe.isSelected()) {
+                    if (btnMasIVA.isSelected()) {
 
-                    if (btnDFI.isSelected()) { //en caso de que halla debito Fiscal
-                        //agregamos la cuenta objetivo MAS el respectivo Debito
-                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
-                        _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
+                        if (btnDFI.isSelected()) { //en caso de que halla debito Fiscal
+                            //pasamos el estring a caracter
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
 
-                    } else if (btnCFI.isSelected()) {
-                        //agregamos la cuenta objetivo MAS el respectivo Credito
-                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), txtSaldo.getText(), ""});
-                        _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
+                            }
+
+                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, txtSaldo.getText(), "0"});
+                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "210702", "Debito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), "0"});
+
+                        } else if (btnCFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
+
+                            }
+                            //agregamos la cuenta objetivo MAS el respectivo Credito
+                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, txtSaldo.getText(), "0"});
+                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "110601", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), "0"});
+                        }
+
+                    } else if (btnExento.isSelected()) { //Si esta exento de iva (por defecto) solo añadimos la cuenta objetivo
+                        cuenta = "";
+                        cod = "";
+                        combo = cbxLista.getSelectedItem().toString();
+                        for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                            c = combo.charAt(i);
+                            if (Character.isLetter(c)) {
+                                cuenta += String.valueOf(c);
+                            } else if (c == ' ') {
+                                cuenta += String.valueOf(c);
+                            } else {
+                                cod += String.valueOf(c);
+                            }
+
+                        }
+                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), "0"});
+
+                    } else if (btnIncluido.isSelected()) { //Para iva INcluido
+
+                        if (btnDFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
+
+                            }
+                            //Exluimos del saldo lo que va hacia el IVA y lo que va hacia la cuenta objetivo
+                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), "0"});
+                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "210702", "Debito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), "0"});
+
+                        } else if (btnCFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
+
+                            }
+                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), "0"});
+                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "110601", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), "0"});
+                        }
                     }
 
-                } else if (btnExento.isSelected()) { //Si esta exento de iva (por defecto) solo añadimos la cuenta objetivo
-                    _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), ""});
+                } else if (btn_haber.isSelected()) {
+                    if (btnMasIVA.isSelected()) {
+                        if (btnDFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
 
-                } else if (btnIncluido.isSelected()) { //Para iva INcluido
+                            }
+                            _Modelo.addRow(new Object[]{"", cod, cuenta, "0", txtSaldo.getText()});
+                            _Modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
+                        } else if (btnCFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
 
-                    if (btnDFI.isSelected()) {
-                        //Exluimos del saldo lo que va hacia el IVA y lo que va hacia la cuenta objetivo
-                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
-                        _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Debito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
+                            }
+                            _Modelo.addRow(new Object[]{"", cod, cuenta, "0", txtSaldo.getText()});
+                            _Modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
+                        }
+                    } else if (btnExento.isSelected()) {
+                        cuenta = "";
+                        cod = "";
+                        combo = cbxLista.getSelectedItem().toString();
+                        for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                            c = combo.charAt(i);
+                            if (Character.isLetter(c)) {
+                                cuenta += String.valueOf(c);
+                            } else if (c == ' ') {
+                                cuenta += String.valueOf(c);
+                            } else {
+                                cod += String.valueOf(c);
+                            }
 
-                    } else if (btnCFI.isSelected()) {
-                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cbxLista.getSelectedItem(), String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
-                        _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
+                        }
+                        _Modelo.addRow(new Object[]{"", cod, cuenta, "0", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText())))});
+                    } else if (btnIncluido.isSelected()) {
+                        if (btnDFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
+
+                            }
+                            _Modelo.addRow(new Object[]{"", cod, cuenta, "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
+                            _Modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
+                        } else if (btnCFI.isSelected()) {
+                            cuenta = "";
+                            cod = "";
+                            combo = cbxLista.getSelectedItem().toString();
+                            for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                                c = combo.charAt(i);
+                                if (Character.isLetter(c)) {
+                                    cuenta += String.valueOf(c);
+                                } else if (c == ' ') {
+                                    cuenta += String.valueOf(c);
+                                } else {
+                                    cod += String.valueOf(c);
+                                }
+
+                            }
+                            _Modelo.addRow(new Object[]{"",cod,cuenta, "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
+                            _Modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
+                        }
                     }
                 }
 
-            } else if (btn_haber.isSelected()) {
-                if (btnMasIVA.isSelected()) {
-                    if (btnDFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", txtSaldo.getText()});
-                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
-                    } else if (btnCFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", txtSaldo.getText()});
-                        _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
-                    }
-                } else if (btnExento.isSelected()) {
-                    _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText())))});
-                } else if (btnIncluido.isSelected()) {
-                    if (btnDFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
-                        _Modelo.addRow(new Object[]{"", "Debito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
-                    } else if (btnCFI.isSelected()) {
-                        _Modelo.addRow(new Object[]{"", cbxLista.getSelectedItem(), "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
-                        _Modelo.addRow(new Object[]{"", "Credito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
-                    }
-                }
+                _Modelo.addRow(new Object[]{"", "", txtConcepto.getText(), "", ""});
+                jButton1.setEnabled(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Saldo debe ser mayor a 0");
             }
-
-            _Modelo.addRow(new Object[]{"", txtConcepto.getText(), "", ""});
         } else {
             JOptionPane.showMessageDialog(null, "TODOS LOS CAMPOS SON REQUERIDOS");
         }
@@ -729,23 +893,23 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         //la fecha y el concepto seran faciles de obtener (son de la primera y la ultima fila
         String Fecha = datos[0][0];
-        String Concepto = datos[tablePartidaPreview.getRowCount() - 1][1];
+        String Concepto = datos[tablePartidaPreview.getRowCount() - 1][2];
         //System.out.println("Fecha: "+Fecha+"      Concepto: "+Concepto);
 
         //Primero insertamos el detalle de la partida para referenciarla luego
         ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`) VALUES (" + Id + ",'" + Fecha + "','" + Concepto + "')");
-        
+
         //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
         for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
-
+            
             //consultamos la id de la cuenta que halla para usar su id luego
-            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'",ConInsertar.getConexion());
+            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE `codigo` = '" + datos[i][1] + "'", ConInsertar.getConexion());
             while (rs.next()) {//mientras tenga registros que haga lo siguiente
                 IdCuenta = rs.getString(1);
                 //System.out.println(IdCuenta);
                 System.out.println("entra");
             }
-
+            
             if (datos[i][2].isEmpty()) {
                 datos[i][2] = "0"; //hacemos cero el valor inexistente, porque el query no admitira un valor vacio
             }
@@ -754,9 +918,10 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
 
             //ejecutamos el query para una cuenta de la partida
+            
             ConInsertar.Ejecutar(
                     "INSERT INTO `cuenta_partida` (`id_cuenta_partida`, `cuenta_id`, `partida_id`, `Debe`, `Haber`) "
-                    + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][2] + "', '" + datos[i][3] + "');");
+                    + "VALUES (NULL, '" + IdCuenta + "', '" + Id + "', '" + datos[i][3] + "', '" + datos[i][4] + "');");
 
         }
 
@@ -795,7 +960,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
 
             //consultamos la id de la cuenta que halla para usar su id luego
-            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'",ConInsertar.getConexion());
+            rs = ConInsertar.Consulta("SELECT id_cuenta FROM `cuenta` WHERE nombre_cuenta LIKE '" + datos[i][1] + "'", ConInsertar.getConexion());
             while (rs.next()) {//mientras tenga registros que haga lo siguiente
                 IdCuenta = rs.getString(1);
                 //System.out.println(IdCuenta);
@@ -835,7 +1000,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     public void cargarNPartida() {
 
         Conexion Cone = new Conexion();
-        ResultSet rs = Cone.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ",Cone.getConexion());
+        ResultSet rs = Cone.Consulta("SELECT id_partida FROM partida ORDER BY id_partida DESC LIMIT 1 ", Cone.getConexion());
 
         String aux = null;
 
