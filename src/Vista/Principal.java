@@ -18,18 +18,22 @@ public class Principal extends javax.swing.JFrame {
 
     int idPartida;//para la funcion eliminar
     DecimalFormat formato = new DecimalFormat("#.00");
+    int spin = 1;
 
     public Principal() {
         initComponents();
-        CargandoPartidas();
+        jSpinner1.setValue(spin);
+
+        CargandoPartidas(Integer.parseInt(jSpinner1.getValue().toString()));
         btnModificar.setVisible(false);
         btnEliminar.setVisible(false);
-        LibroMayor();
-        BalanceComprobacion();
+        LibroMayor(Integer.parseInt(jSpinner1.getValue().toString()));
+        BalanceComprobacion(Integer.parseInt(jSpinner1.getValue().toString()));
         sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
         sumar(jTable2, 2, 3, jTextField3, jTextField4);
-        EstadoResultados();
-        BalanceGeneral();
+        EstadoResultados(Integer.parseInt(jSpinner1.getValue().toString()));
+        BalanceGeneral(Integer.parseInt(jSpinner1.getValue().toString()));
+
     }
 
     @SuppressWarnings("unchecked")
@@ -51,6 +55,8 @@ public class Principal extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         btnModificar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
+        jSpinner1 = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -142,6 +148,14 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        jSpinner1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSpinner1StateChanged(evt);
+            }
+        });
+
+        jLabel2.setText("N. Libro");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -173,23 +187,33 @@ public class Principal extends javax.swing.JFrame {
                                 .addComponent(btnEliminar))
                             .addComponent(btnAgregarPartida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSpinner1))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(jLabel7))
-                    .addComponent(btnAgregarPartida))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel9)
-                    .addComponent(btnModificar)
-                    .addComponent(btnEliminar))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel6)
+                                .addComponent(jLabel7))
+                            .addComponent(btnAgregarPartida))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9)
+                            .addComponent(btnModificar)
+                            .addComponent(btnEliminar)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addGap(7, 7, 7)
@@ -199,7 +223,7 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jLabel13)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(82, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Libro Diario", jPanel2);
@@ -492,8 +516,8 @@ public class Principal extends javax.swing.JFrame {
         //agregarPartida.eliminar(true);
         agregarPartida.setLocationRelativeTo(null);
         agregarPartida.setDefaultCloseOperation(agregarPartida.DISPOSE_ON_CLOSE);
-        CargandoPartidas();
-
+        CargandoPartidas(Integer.parseInt(jSpinner1.getValue().toString()));
+        agregarPartida.jSpinner1.setValue(jSpinner1.getValue());
     }//GEN-LAST:event_btnAgregarPartidaActionPerformed
 
     private void TableMostrarPartidasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableMostrarPartidasMouseClicked
@@ -524,7 +548,7 @@ public class Principal extends javax.swing.JFrame {
 
         if (EliminarPartidaBD()) {
             ModificarId(idPartida);
-            CargandoPartidas();
+            CargandoPartidas(Integer.parseInt(jSpinner1.getValue().toString()));
             sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
         } else {
             JOptionPane.showMessageDialog(null, "ERROR AL ELIMINAR");
@@ -545,21 +569,24 @@ public class Principal extends javax.swing.JFrame {
             ResultSet rs = null;
             ResultSet rs1 = null;
 
-            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + "", con.getConexion());
-            rs1 = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + idPartida + "", con.getConexion());
+            //rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto` FROM `partida` WHERE `id_partida` = " + idPartida + " && n_libro = '" + jSpinner1.getValue().toString() + "'", con.getConexion());
+            rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto`, `n_partida`,`n_libro` FROM `partida` WHERE `n_partida`='" + idPartida + "' && `n_libro` = '" + jSpinner1.getValue().toString() + "' ", con.getConexion());
+
+            rs1 = con.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE partida.n_partida = '" + idPartida + "' && partida.n_libro = '" + jSpinner1.getValue().toString() + "' ", con.getConexion());
 
             while (rs.next()) {
                 String partida = "Partida " + rs.getString("id_partida");
-                modelo.addRow(new Object[]{rs.getString("fecha"), partida, "", ""});
+                modelo.addRow(new Object[]{rs.getString("fecha"), "", partida, "", ""});
                 agg.txtFecha.setText(rs.getString("fecha"));
                 agg.txtModif.setText(rs.getString("id_partida"));
                 while (rs1.next()) {
-                    modelo.addRow(new Object[]{"", rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
+                    modelo.addRow(new Object[]{"", rs1.getString("codigo"), rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
                 }
-                modelo.addRow(new Object[]{"", rs.getString("concepto"), "", ""});
+                modelo.addRow(new Object[]{"", "", rs.getString("concepto"), "", ""});
                 agg.txtConcepto.setText(rs.getString("concepto"));
 
             }
+            agg.jSpinner1.setValue(jSpinner1.getValue());
             con.close(); //aqui esta un close
             rs.close();
             rs1.close();
@@ -570,27 +597,38 @@ public class Principal extends javax.swing.JFrame {
         agg.btnModificar.setVisible(true);
         agg.setVisible(true);
         agg.setDefaultCloseOperation(agg.DISPOSE_ON_CLOSE);
-        
+
         btnModificar.setVisible(false);
         btnEliminar.setVisible(false);
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        LibroMayor();
+        LibroMayor(Integer.parseInt(jSpinner1.getValue().toString()));
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        BalanceComprobacion();
+        BalanceComprobacion(Integer.parseInt(jSpinner1.getValue().toString()));
         sumar(jTable2, 2, 3, jTextField3, jTextField4);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        EstadoResultados();
+        EstadoResultados(Integer.parseInt(jSpinner1.getValue().toString()));
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        BalanceGeneral();
+        BalanceGeneral(Integer.parseInt(jSpinner1.getValue().toString()));
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
+        spin = Integer.parseInt(jSpinner1.getValue().toString());
+        CargandoPartidas(Integer.parseInt(jSpinner1.getValue().toString()));
+        LibroMayor(Integer.parseInt(jSpinner1.getValue().toString()));
+        BalanceComprobacion(Integer.parseInt(jSpinner1.getValue().toString()));
+        sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
+        sumar(jTable2, 2, 3, jTextField3, jTextField4);
+        EstadoResultados(Integer.parseInt(jSpinner1.getValue().toString()));
+        BalanceGeneral(Integer.parseInt(jSpinner1.getValue().toString()));
+    }//GEN-LAST:event_jSpinner1StateChanged
 
     /**
      * @param args the command line arguments
@@ -630,7 +668,8 @@ public class Principal extends javax.swing.JFrame {
         });
     }
 
-    public void CargandoPartidas() {
+    public void CargandoPartidas(int libro) {
+
         DefaultTableModel modelo = (DefaultTableModel) TableMostrarPartidas.getModel();
 
         //vacia la tabla
@@ -639,29 +678,29 @@ public class Principal extends javax.swing.JFrame {
         }
 
         //tamaño de las columnas
-        int[] anchos = {40,40, 200, 50, 50};
+        int[] anchos = {40, 40, 200, 50, 50};
 
         for (int i = 0; i < modelo.getColumnCount(); i++) {
             TableMostrarPartidas.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
         }
 
         Conexion con = new Conexion();
-        ResultSet rs = con.Consulta("SELECT * FROM `partida`", con.getConexion());//consulta
+        ResultSet rs = con.Consulta("SELECT `id_partida`, `fecha`, `concepto`, `n_partida`, `n_libro` FROM `partida` WHERE `n_libro` ='" + libro + "'", con.getConexion());//consulta
         try {
             while (rs.next()) {
-                modelo.addRow(new Object[]{rs.getString("fecha"),"", "Partida N. " + rs.getString("id_partida"), "", ""});
+                modelo.addRow(new Object[]{rs.getString("fecha"), "", "Partida N. " + rs.getString("n_partida"), "", ""});
                 Conexion con1 = new Conexion();
                 ResultSet rs1 = con1.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE partida_id = " + rs.getString("id_partida") + "", con.getConexion());//consulta
                 try {
                     while (rs1.next()) {
-                        modelo.addRow(new Object[]{"",rs1.getString("codigo"), rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
+                        modelo.addRow(new Object[]{"", rs1.getString("codigo"), rs1.getString("nombre_cuenta"), rs1.getString("Debe"), rs1.getString("Haber")});
 
                     }
                     rs1.close();
                 } catch (SQLException ex) {
                     Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                modelo.addRow(new Object[]{"","", "C/ " + rs.getString("concepto"), "", ""});
+                modelo.addRow(new Object[]{"", "", "C/ " + rs.getString("concepto"), "", ""});
                 sumar(TableMostrarPartidas, 3, 4, jTextField1, jTextField2);
             }
             rs.close();
@@ -709,7 +748,7 @@ public class Principal extends javax.swing.JFrame {
         Connection conn = con.getConexion();
 
         try {
-            ps = conn.prepareStatement("DELETE FROM `partida` WHERE `id_partida` = " + idPartida + "");
+            ps = conn.prepareStatement("DELETE FROM `partida` WHERE `n_partida` = " + idPartida + " && n_libro = '" + jSpinner1.getValue().toString() + "'");
             ps.execute();
             ps.close();
             return true;
@@ -738,7 +777,7 @@ public class Principal extends javax.swing.JFrame {
             PreparedStatement ps = null;
             Connection conn = con.getConexion();
             try {
-                ps = conn.prepareStatement("UPDATE `partida` SET `id_partida`= " + nuevo + " WHERE `id_partida` = " + modifica + "");
+                ps = conn.prepareStatement("UPDATE `partida` SET `n_partida`= " + nuevo + " WHERE `n_partida` = " + modifica + " && n_libro = '" + jSpinner1.getValue().toString() + "'");
                 ps.execute();
                 ps.close();
             } catch (SQLException ex) {
@@ -752,7 +791,6 @@ public class Principal extends javax.swing.JFrame {
 
     }
 
-    /*Esta funcion retorna cuantos registros hay en la base de datos de la tabla partida y devuelve ese valor*/
     public int CuantosIdP() {
         int n = 0;//variable que retorna el valor
         Conexion con = new Conexion();
@@ -760,7 +798,7 @@ public class Principal extends javax.swing.JFrame {
         Connection conn = con.getConexion();
         ResultSet rs = null;
         try {
-            ps = conn.prepareStatement("SELECT COUNT(*) FROM `partida` ");
+            ps = conn.prepareStatement("SELECT COUNT(*) FROM `partida` WHERE `n_libro` = '" + jSpinner1.getValue().toString() + "' ");
             rs = ps.executeQuery();
             if (rs.next()) {
                 n = Integer.parseInt(rs.getString("COUNT(*)"));
@@ -843,42 +881,57 @@ public class Principal extends javax.swing.JFrame {
             //insertamos la partida
             DecimalFormat formato = new DecimalFormat("#.00");
             Conexion insertar = new Conexion();
-            insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`) VALUES ('" + ultimaPartida + "', '" + fechaS + "', 'Ajuste de IVA');");
+            insertar.Ejecutar("INSERT INTO `partida` (`id_partida`, `fecha`, `concepto`, n_partida,n_libro) VALUES (NULL, '" + fechaS + "', 'Ajuste de IVA','" + ultimaPartida + "','" + jSpinner1.getValue().toString() + "');");
+
+            //hay que obtener el ultimo id de las partidas para ingresar el nuevo
+            String ultimoId = "";
+            Conexion con = new Conexion();
+            ResultSet rs = con.Consulta("select * from partida order by id_partida DESC limit 1 ", con.getConexion());
+
+            try {
+                if (rs.next()) {
+                    ultimoId = rs.getString("id_partida");
+                }
+                con.close();
+                rs.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(Principal.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
             if (IVAremanente) {
                 if (debitoD > debitoH) {
                     System.out.println("es la primera");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (39," + ultimaPartida + "," + formato.format(remanente) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimoId + "," + formato.format(totalC) + ", 0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (39," + ultimoId + "," + formato.format(remanente) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimoId + ",0," + formato.format(totalD) + ");");
                 } else if (debitoD < debitoH) {
                     System.out.println("es la segunda");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (39," + ultimaPartida + "," + formato.format(remanente) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimoId + "," + formato.format(totalD) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (39," + ultimoId + "," + formato.format(remanente) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimoId + ",0," + formato.format(totalC) + ");");
                 }
 
             } else if (IVAimpuesto) {
                 if (debitoD > debitoH) {
                     System.out.println("es la tercera");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + "," + formato.format(totalC) + ", 0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (146," + ultimaPartida + ",0," + formato.format(impuesto) + ");");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + ",0," + formato.format(totalD) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimoId + "," + formato.format(totalC) + ", 0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (146," + ultimoId + ",0," + formato.format(impuesto) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimoId + ",0," + formato.format(totalD) + ");");
                 } else if (debitoD < debitoH) {
                     System.out.println("es la cuarta");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimaPartida + "," + formato.format(totalD) + ",0);");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (146," + ultimaPartida + ",0," + formato.format(impuesto) + ")");
-                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimaPartida + ",0," + formato.format(totalC) + ");");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (168," + ultimoId + "," + formato.format(totalD) + ",0);");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (146," + ultimoId + ",0," + formato.format(impuesto) + ")");
+                    insertar.Ejecutar("INSERT INTO `cuenta_partida`(`cuenta_id`, `partida_id`, `Debe`, `Haber`) VALUES (38," + ultimoId + ",0," + formato.format(totalC) + ");");
                 }
             }
-            CargandoPartidas();
+            CargandoPartidas(Integer.parseInt(jSpinner1.getValue().toString()));
         } else {
             JOptionPane.showMessageDialog(null, "NO HAY REGISTRO DE IVA");
         }
 
     }
 
-    public void LibroMayor() {
+    public void LibroMayor(int libro) {
         Double contando = 0.0;
         boolean esta = false;
         String nivel3 = "";
@@ -892,7 +945,7 @@ public class Principal extends javax.swing.JFrame {
             modelo.removeRow(0);
         }
 
-        rs = con.Consulta("SELECT cuenta.codigo FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id", con.getConexion());
+        rs = con.Consulta("SELECT cuenta.codigo FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE partida.n_libro ='" + libro + "' ", con.getConexion());
 
         try {
             while (rs.next()) {
@@ -986,7 +1039,7 @@ public class Principal extends javax.swing.JFrame {
         }
     }
 
-    public void BalanceComprobacion() {
+    public void BalanceComprobacion(int libro) {
         boolean ya = false;
         Double sD = 0.0;
         Double sH = 0.0;
@@ -1005,26 +1058,27 @@ public class Principal extends javax.swing.JFrame {
                 codigo = Integer.parseInt(rs.getString("codigo"));
 
                 if (codigo == 1 || codigo == 2 || codigo == 31 || codigo == 5 || codigo == 41 || codigo == 42) {
-                    modelo.addRow(new Object[]{"",rs.getString("nombre_cuenta"), "", ""});
+                    modelo.addRow(new Object[]{"", rs.getString("nombre_cuenta"), "", ""});
                     Conexion co = new Conexion();
-                    ResultSet r = co.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE `codigo` Like '" + codigo + "%'", co.getConexion());
+                    //ResultSet r = co.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE `codigo` Like '" + codigo + "%'", co.getConexion());
+                    ResultSet r = co.Consulta("SELECT cuenta.codigo,cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE cuenta.codigo Like '" + codigo + "%' && partida.n_libro ='" + libro + "'", co.getConexion());
 
                     while (r.next()) {
                         if (modelo.getRowCount() == 1) {
                             if (rs.getString("tipo_saldo").equals("Deudor")) {
                                 if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
-                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), formato.format(Double.parseDouble(r.getString("Debe"))), formato.format(Double.parseDouble(r.getString("Haber")))});
+                                    modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), formato.format(Double.parseDouble(r.getString("Debe"))), formato.format(Double.parseDouble(r.getString("Haber")))});
 
                                 } else if (Double.parseDouble(r.getString("Haber")) > 0) {
-                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(r.getString("Haber"))), "0"});
+                                    modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), formato.format(0 - Double.parseDouble(r.getString("Haber"))), "0"});
 
                                 }
                             } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
                                 if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
-                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), formato.format(r.getString("Debe")), formato.format(r.getString("Haber"))});
+                                    modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), formato.format(r.getString("Debe")), formato.format(r.getString("Haber"))});
 
                                 } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
-                                    modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), "0", formato.format(0 - Double.parseDouble(r.getString("Debe")))});
+                                    modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), "0", formato.format(0 - Double.parseDouble(r.getString("Debe")))});
 
                                 }
 
@@ -1071,18 +1125,18 @@ public class Principal extends javax.swing.JFrame {
                             if (!ya) {
                                 if (rs.getString("tipo_saldo").equals("Deudor")) {
                                     if (Double.parseDouble(r.getString("Haber")) <= 0.00) {
-                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+                                        modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
                                     } else if (Double.parseDouble(r.getString("Haber")) > 0) {
-                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
+                                        modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), 0 - Double.parseDouble(r.getString("Haber")), "0"});
 
                                     }
                                 } else if (rs.getString("tipo_saldo").equals("Acreedor")) {
                                     if (Double.parseDouble(r.getString("Debe")) <= 0.00) {
-                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
+                                        modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), r.getString("Debe"), r.getString("Haber")});
 
                                     } else if (Double.parseDouble(r.getString("Debe")) > 0.00) {
-                                        modelo.addRow(new Object[]{r.getString("codigo"),r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
+                                        modelo.addRow(new Object[]{r.getString("codigo"), r.getString("nombre_cuenta"), "0", 0 - Double.parseDouble(r.getString("Debe"))});
 
                                     }
 
@@ -1104,7 +1158,7 @@ public class Principal extends javax.swing.JFrame {
         }
     }
 
-    public void EstadoResultados() {
+    public void EstadoResultados(int libro) {
         Double impuestos = null;
         DefaultTableModel modelo = (DefaultTableModel) jTable3.getModel();
         Double Debe = 0.00;
@@ -1118,7 +1172,9 @@ public class Principal extends javax.swing.JFrame {
         }
 
         Conexion con = new Conexion();
-        ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '5%'", con.getConexion());
+        ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE codigo LIKE '5%' && partida.n_libro = '" + libro + "' ", con.getConexion());
+
+        //ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '5%'", con.getConexion());
         try {
             while (rs.next()) {
                 Debe += Double.parseDouble(rs.getString("Debe"));
@@ -1133,8 +1189,9 @@ public class Principal extends javax.swing.JFrame {
         }
 
         modelo.addRow(new Object[]{"Ingresos", formato.format(ingresos)});
+        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE codigo LIKE '41%' && partida.n_libro = '" + libro + "' ", con.getConexion());
 
-        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '41%'", con.getConexion());
+        //rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '41%'", con.getConexion());
         try {
             Debe = 0.0;
             Haber = 0.0;
@@ -1154,7 +1211,9 @@ public class Principal extends javax.swing.JFrame {
         modelo.addRow(new Object[]{"Utilidad Bruta", formato.format(ingresos - costos)});
 
         try {
-            rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE cuenta.codigo LIKE '42%'", con.getConexion());
+            rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE codigo LIKE '42%' && partida.n_libro = '" + libro + "' ", con.getConexion());
+
+            //rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE cuenta.codigo LIKE '42%'", con.getConexion());
 
             Debe = 0.0;
             Haber = 0.0;
@@ -1192,7 +1251,7 @@ public class Principal extends javax.swing.JFrame {
         jTextField7.setText(formato.format(((ingresos - costos) - gastos) * 0.07));
     }
 
-    public void BalanceGeneral() {
+    public void BalanceGeneral(int libro) {
         DefaultTableModel activos = (DefaultTableModel) jTable4.getModel();
         DefaultTableModel pasivos = (DefaultTableModel) jTable5.getModel();
 
@@ -1205,7 +1264,7 @@ public class Principal extends javax.swing.JFrame {
         }
 
         Conexion con = new Conexion();
-        ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '1%'", con.getConexion());
+        ResultSet rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE cuenta.codigo LIKE '1%' && partida.n_libro ='"+libro+"'", con.getConexion());
 
         Double saldo = 0.0;
         boolean ya = false;
@@ -1266,7 +1325,7 @@ public class Principal extends javax.swing.JFrame {
         jTextField8.setText(formato.format(sumActivos));
         //activos.addRow(new Object[]{"TOTAL ", formato.format(sumActivos)});
 
-        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '2%'", con.getConexion());
+        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE cuenta.codigo LIKE '2%' && partida.n_libro ='"+libro+"'", con.getConexion());
         try {
             pasivos.addRow(new Object[]{"PASIVOS ", "0"});
 
@@ -1320,7 +1379,7 @@ public class Principal extends javax.swing.JFrame {
 
         pasivos.addRow(new Object[]{"PATRIMONIO ", "0"});
 
-        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta INNER JOIN cuenta_partida ON cuenta.id_cuenta = cuenta_partida.cuenta_id WHERE codigo LIKE '3%'", con.getConexion());
+        rs = con.Consulta("SELECT cuenta.nombre_cuenta, cuenta_partida.Debe, cuenta_partida.Haber FROM cuenta_partida inner JOIN cuenta ON cuenta_partida.cuenta_id = cuenta.id_cuenta inner JOIN partida ON cuenta_partida.partida_id = partida.id_partida WHERE cuenta.codigo LIKE '3%' && partida.n_libro ='"+libro+"'", con.getConexion());
         try {
 
             while (rs.next()) {
@@ -1366,6 +1425,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -1381,6 +1441,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JSpinner jSpinner1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
