@@ -1,6 +1,8 @@
 package Vista;
 
 import Modelo.Conexion;
+import Modelo.Plantilla;
+import java.awt.event.ItemEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,6 +19,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     boolean Encabezado = false;//Nos servira para insertar el encabezado si no esta
     boolean Concepto = true;
     int UltimaDebe = 1;//nos servira para saber en donde ir insertando en el debe
+    Plantilla plan = new Plantilla();
 
     public AgregarPartida() {
         initComponents();
@@ -30,12 +33,23 @@ public class AgregarPartida extends javax.swing.JFrame {
         grupoBotonesDC.add(btnCFI);
         grupoBotonesDC.add(btnDFI);
         cargarLista("SELECT * FROM `cuenta`;");//Carga todas las cuentas en un comboBox
+        CargarPlantillas();
         btnModificar.setVisible(false);
         cargarNPartida();  //funcion que cargara el numero de partida que halla
         btnExento.setSelected(true);
         OcultarDC();
         jButton1.setEnabled(false);
 
+        //vemos si se usara la plantilla
+        if (plan.isUsar()) {
+            System.out.println("se va usar la plantilla");
+            AgregarPlantilla();
+            sumar(); 
+            jButton1.setEnabled(true);
+        } else {
+            System.out.println("no se usa plantilla");
+            //jButton1.setVisible(false);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -77,6 +91,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         btnModificar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
+        cbxPlantillas = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -160,9 +175,9 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
         });
 
-        cbxLista.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbxListaActionPerformed(evt);
+        cbxLista.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbxListaItemStateChanged(evt);
             }
         });
 
@@ -244,6 +259,12 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
         });
 
+        cbxPlantillas.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbxPlantillasItemStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -277,38 +298,43 @@ public class AgregarPartida extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(cbxLista, javax.swing.GroupLayout.Alignment.LEADING, 0, 139, Short.MAX_VALUE)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel6)
-                                            .addGap(18, 18, 18)
-                                            .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(btn_debe)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(btn_haber)))
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnAgregarCuenta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btn_eliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnExento)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnMasIVA)
-                                    .addComponent(btnIncluido))
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(cbxLista, javax.swing.GroupLayout.Alignment.LEADING, 0, 139, Short.MAX_VALUE)
+                                            .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(jLabel6)
+                                                    .addGap(18, 18, 18)
+                                                    .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(layout.createSequentialGroup()
+                                                    .addComponent(btn_debe)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                    .addComponent(btn_haber)))
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(btnAgregarCuenta, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(btn_eliminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(btnModificar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnCFI)
-                                    .addComponent(btnDFI))))))
+                                    .addComponent(btnExento)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(btnMasIVA)
+                                            .addComponent(btnIncluido))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(btnCFI)
+                                            .addComponent(btnDFI)))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cbxPlantillas, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -333,7 +359,9 @@ public class AgregarPartida extends javax.swing.JFrame {
                                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                     .addComponent(cbxLista, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(27, 27, 27)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(cbxPlantillas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(1, 1, 1)
                                     .addComponent(jLabel3))
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -489,7 +517,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
                 this.setVisible(false);
                 this.dispose();
-
+                plan.setUsar(false);
             } catch (SQLException ex) {
                 Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(rootPane, "Revisa los datos ingresados!");
@@ -545,13 +573,80 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnModificarActionPerformed
 
-    private void cbxListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxListaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbxListaActionPerformed
-
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
         cargarNPartida();
     }//GEN-LAST:event_jSpinner1StateChanged
+
+    private void cbxListaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxListaItemStateChanged
+        if (evt.getStateChange() == ItemEvent.SELECTED) {
+            //System.out.println(cbxLista.getSelectedItem().toString());
+            if (!cbxLista.getSelectedItem().toString().isEmpty()) {
+                try {
+                    String cuenta = "";
+                    String cod = "";
+                    char c;
+                    String combo = cbxLista.getSelectedItem().toString();
+                    for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
+                        c = combo.charAt(i);
+                        if (Character.isLetter(c)) {
+                            cuenta += String.valueOf(c);
+                        } else if (c == ' ') {
+                            cuenta += String.valueOf(c);
+                        } else {
+                            cod += String.valueOf(c);
+                        }
+
+                    }
+                    // cuenta cambia el item
+                    //vamos a ver si la cuenta seleccionada en el item tiene una plantilla
+                    Conexion con = new Conexion();
+                    ResultSet rs = con.Consulta("SELECT `IdPlantilla`, `NombrePlantilla`, `CuentaDefault`, `TipoIVA` FROM `plantilla` WHERE `CuentaDefault` = '" + cod
+                            + "'", con.getConexion()
+                    );
+
+                    if (rs.next()) {
+                        if (cbxLista.getSelectedItem().toString().equals(rs.getString("NombrePlantilla") + rs.getString("CuentaDefault"))) {
+                            JOptionPane.showMessageDialog(null, "le mostramos la plantilla");
+                        }
+                    }
+
+                    con.close();
+                    rs.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_cbxListaItemStateChanged
+
+    private void cbxPlantillasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxPlantillasItemStateChanged
+        // COMBOBOX PLANTILLAS
+
+        if (evt.getStateChange() == ItemEvent.SELECTED) {//esto detecta si el evento es "seleccionado un item"
+            String seleccion = cbxPlantillas.getSelectedItem().toString();
+            if (!seleccion.equals("---PLANTILLAS---")) {
+                Conexion con = new Conexion();
+                ResultSet rs = con.Consulta("SELECT * FROM `plantilla` WHERE `NombrePlantilla` = '" + seleccion + "'", con.getConexion());
+                try {
+                    if (rs.next()) {
+                        plan.setIdplantilla(rs.getString("IdPlantilla"));
+                        plan.setTipoIVA(rs.getString("TipoIVA"));
+                        plan.setDef(rs.getString("CuentaDefault"));
+                        MuestraPlantilla mp = new MuestraPlantilla();
+                        mp.setVisible(true);
+                        mp.setLocationRelativeTo(null);
+                        mp.setDefaultCloseOperation(mp.DISPOSE_ON_CLOSE);
+                        this.setVisible(false);
+                        this.dispose();
+                    }
+                    con.close();
+                    rs.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_cbxPlantillasItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -923,7 +1018,7 @@ public class AgregarPartida extends javax.swing.JFrame {
         //System.out.println("Fecha: "+Fecha+"      Concepto: "+Concepto);
 
         //Primero insertamos el detalle de la partida para referenciarla luego
-        ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`, `n_partida`, `n_libro`) VALUES (NULL,'"+Fecha+"','" + Concepto + "','" + Id + "','" + jSpinner1.getValue().toString() + "')");
+        ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`, `n_partida`, `n_libro`) VALUES (NULL,'" + Fecha + "','" + Concepto + "','" + Id + "','" + jSpinner1.getValue().toString() + "')");
         //ConInsertar.Ejecutar("INSERT INTO `partida`(`id_partida`, `fecha`, `concepto`) VALUES (" + Id + ",'" + Fecha + "','" + Concepto + "')");
 
         //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
@@ -947,7 +1042,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             Conexion con = new Conexion();
             ResultSet rs1 = con.Consulta("SELECT * FROM `partida` ORDER BY `id_partida` DESC LIMIT 1 ", con.getConexion());
             String a = "";
-            if(rs1.next()){
+            if (rs1.next()) {
                 a = rs1.getString("id_partida");
             }
             System.out.println(a);
@@ -987,9 +1082,8 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         //Primero insertamos el detalle de la partida para referenciarla luego
         ConInsertar.Ejecutar("UPDATE `partida` "
-                + "SET `fecha`= '" + Fecha + "',`concepto`= '" + Concepto + "' WHERE `id_partida` = " + Id+" && n_libro = '"+jSpinner1.getValue().toString()+"'");
+                + "SET `fecha`= '" + Fecha + "',`concepto`= '" + Concepto + "' WHERE `id_partida` = " + Id + " && n_libro = '" + jSpinner1.getValue().toString() + "'");
 
-        
         //para cada fila de cuenta que halla (desde la segunda hasta la penultima fila
         for (int i = 1; i < tablePartidaPreview.getRowCount() - 1; i++) {
 
@@ -1011,7 +1105,7 @@ public class AgregarPartida extends javax.swing.JFrame {
             Conexion con = new Conexion();
             ResultSet rs1 = con.Consulta("SELECT * FROM `partida` ORDER BY `id_partida` DESC LIMIT 1 ", con.getConexion());
             String a = "";
-            if(rs1.next()){
+            if (rs1.next()) {
                 a = rs1.getString("id_partida");
             }
             System.out.println(a);
@@ -1142,6 +1236,124 @@ public class AgregarPartida extends javax.swing.JFrame {
 
     }
 
+    public void CargarPlantillas()//esta funcion cargara las plantillas disponibles en un cbx
+    {
+        try {
+            //Nueva conexion
+            Conexion conecta = new Conexion();
+            ResultSet rs;
+            rs = conecta.Consulta("SELECT `NombrePlantilla` FROM `plantilla`  ", conecta.getConexion());
+
+            //removemos todo del combo box
+            cbxPlantillas.removeAllItems();
+            cbxPlantillas.addItem("---PLANTILLAS---");
+            //mientras halla otro dato en rs, añadimos a la combo box un resultado
+            while (rs.next()) {
+
+                cbxPlantillas.addItem(rs.getString("NombrePlantilla"));
+
+            }
+            //cerramos la conexion cerrando el resultado obtenido
+
+            rs.close();
+            conecta.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void AgregarPlantilla() {
+        DecimalFormat formato = new DecimalFormat("#.00");
+        //mas iva
+        String iva = String.valueOf(formato.format(Double.parseDouble(plan.getSaldo()) * 0.13));
+        String masIva = String.valueOf(formato.format(Double.parseDouble(plan.getSaldo()) * 1.13));
+
+        //IVA incluida
+        String sinIva = String.valueOf(formato.format(Double.parseDouble(plan.getSaldo()) - Double.parseDouble(iva)));
+        
+        
+        DefaultTableModel modelo = (DefaultTableModel) tablePartidaPreview.getModel();
+        String tabla[][] = plan.getTabla();
+        //fecha y n partida
+        modelo.addRow(new Object[]{plan.getFecha(), "", "Partida " + txtNPartida.getText(), "", ""});
+        for (int i = 0; i < plan.getFilas(); i++) {
+            //validando los botones de iva
+            if (plan.getBotonIVA().equals("EXCENTO")) {
+                //poner los saldos
+                if (tabla[i][2].equals("$")) {
+                    modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
+                } else if (tabla[i][3].equals("$")) {
+                    modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "0", plan.getSaldo()});
+                }
+            } else if (plan.getBotonIVA().equals("MAS")) {//mas iva
+                //ver la cuenta default porque debajo de esta ira el respectivo iva
+                if (tabla[i][0].equals(plan.getDef())) {
+                    if (plan.getTipoIVA().equals("Debito")) {
+                        //poner los saldos
+                        if (tabla[i][2].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", iva, "0"});
+                        } else if (tabla[i][3].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", plan.getSaldo()});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", iva});
+                        }
+                    } else if (plan.getTipoIVA().equals("Credito")) {
+                        //poner los saldos
+                        if (tabla[i][2].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", iva, "0"});
+                        } else if (tabla[i][3].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", plan.getSaldo()});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", iva});
+                        }
+                    }
+                } else {
+                    //poner los saldos
+                    if (tabla[i][2].equals("$")) {
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], masIva, "0"});
+                    } else if (tabla[i][3].equals("$")) {
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "0", masIva});
+                    }
+                }
+
+            } else if (plan.getBotonIVA().equals("INCLUIDO")) {
+                //ver la cuenta default porque debajo de esta ira el respectivo iva
+                if (tabla[i][0].equals(plan.getDef())) {
+                    if (plan.getTipoIVA().equals("Debito")) {
+                        //poner los saldos
+                        if (tabla[i][2].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], sinIva, "0"});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", iva, "0"});
+                        } else if (tabla[i][3].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", sinIva});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", iva});
+                        }
+                    } else if (plan.getTipoIVA().equals("Credito")) {
+                        //poner los saldos
+                        if (tabla[i][2].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], sinIva, "0"});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", iva, "0"});
+                        } else if (tabla[i][3].equals("$")) {
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", sinIva});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", iva});
+                        }
+                    }
+                } else {
+                    //poner los saldos
+                    if (tabla[i][2].equals("$")) {
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
+                    } else if (tabla[i][3].equals("$")) {
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "0", plan.getSaldo()});
+                    }
+                }
+            }
+
+        }
+        //concepto
+        modelo.addRow(new Object[]{"", "", plan.getConcepto(), "", ""});
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup GrupoBotonesIVA;
     private javax.swing.ButtonGroup Grupo_botones_DH;
@@ -1157,6 +1369,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     public javax.swing.JButton btn_eliminar;
     public javax.swing.JRadioButton btn_haber;
     public javax.swing.JComboBox cbxLista;
+    private javax.swing.JComboBox cbxPlantillas;
     private javax.swing.ButtonGroup grupoBotonesDC;
     public javax.swing.JButton jButton1;
     public javax.swing.JLabel jLabel1;
