@@ -60,6 +60,7 @@ public class AgPlantilla extends javax.swing.JFrame {
         jTable1 = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
         txtNombre = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         jTextField2.setText("jTextField2");
 
@@ -107,6 +108,8 @@ public class AgPlantilla extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Nombre de la plantilla");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -129,10 +132,12 @@ public class AgPlantilla extends javax.swing.JFrame {
                                 .addComponent(jRadioButton4)
                                 .addGap(37, 37, 37)
                                 .addComponent(jButton1))
-                            .addGroup(layout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jRadioButton3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(35, 35, 35))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
@@ -144,7 +149,7 @@ public class AgPlantilla extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -154,7 +159,8 @@ public class AgPlantilla extends javax.swing.JFrame {
                             .addComponent(jRadioButton2))
                         .addGap(39, 39, 39))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jRadioButton1)
                             .addComponent(jRadioButton3)
@@ -166,7 +172,7 @@ public class AgPlantilla extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jRadioButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jButton2)
                 .addGap(26, 26, 26))
@@ -386,7 +392,7 @@ public class AgPlantilla extends javax.swing.JFrame {
 
         if (def) {
             Conexion con = new Conexion();
-            con.Ejecutar("INSERT INTO `plantilla`(`IdPlantilla`, `NombrePlantilla`, `CuentaDefault`, `TipoIVA`) VALUES (NULL,'" + nombreP + "','" + codigoCD + "','" + defaul + "')");
+            con.Ejecutar("INSERT INTO `plantilla`(`IdPlantilla`, `NombrePlantilla`, `CuentaDefault`, `TipoIVA`) VALUES (NULL,'" + txtNombre.getText().toString() + "','" + codigoCD + "','" + defaul + "')");
 
             ResultSet rs = con.Consulta("SELECT * FROM `plantilla` order by `IdPlantilla` DESC limit 1 ", con.getConexion());
 
@@ -442,6 +448,7 @@ public class AgPlantilla extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
