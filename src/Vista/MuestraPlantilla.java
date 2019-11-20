@@ -25,6 +25,13 @@ public class MuestraPlantilla extends javax.swing.JFrame {
     public MuestraPlantilla() {
         initComponents();
         MuestraPlan();
+        
+        //tamaño de las columnas
+        int[] anchos = {50, 200, 50, 50};
+
+        for (int i = 0; i < jTable1.getColumnCount(); i++) {
+            jTable1.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+        }
     }
 
     /**

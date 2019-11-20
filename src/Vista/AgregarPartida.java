@@ -1,6 +1,7 @@
 package Vista;
 
 import Modelo.Conexion;
+import Modelo.Libro;
 import Modelo.Plantilla;
 import java.awt.event.ItemEvent;
 import java.sql.Connection;
@@ -15,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class AgregarPartida extends javax.swing.JFrame {
-
+    Libro l = new Libro();
     boolean Encabezado = false;//Nos servira para insertar el encabezado si no esta
     boolean Concepto = true;
     int UltimaDebe = 1;//nos servira para saber en donde ir insertando en el debe
@@ -24,7 +25,7 @@ public class AgregarPartida extends javax.swing.JFrame {
     public AgregarPartida() {
         initComponents();
         //Inicializa los distintos grupos de opciones para que funcionen correctamente
-        jSpinner1.setValue(1);
+        jSpinner1.setValue(l.getAnterior());
         Grupo_botones_DH.add(btn_debe);
         Grupo_botones_DH.add(btn_haber);
         GrupoBotonesIVA.add(btnMasIVA);
@@ -46,9 +47,19 @@ public class AgregarPartida extends javax.swing.JFrame {
             AgregarPlantilla();
             sumar(); 
             jButton1.setEnabled(true);
+            txtConcepto.setText(plan.getConcepto());
+            txtFecha.setText(plan.getFecha());
+            Encabezado = true;
         } else {
             System.out.println("no se usa plantilla");
             //jButton1.setVisible(false);
+        }
+        
+        //tamaño de las columnas
+        int[] anchos = {40, 40, 200, 50, 50};
+
+        for (int i = 0; i < tablePartidaPreview.getColumnCount(); i++) {
+            tablePartidaPreview.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
         }
     }
 
@@ -175,12 +186,6 @@ public class AgregarPartida extends javax.swing.JFrame {
             }
         });
 
-        cbxLista.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cbxListaItemStateChanged(evt);
-            }
-        });
-
         jLabel6.setText("Saldo");
 
         txtSaldo.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -219,6 +224,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
         btnCFI.setText("CFI");
 
+        btnAgregarCuenta.setBackground(new java.awt.Color(0, 0, 255));
         btnAgregarCuenta.setText("Agregar cuenta");
         btnAgregarCuenta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -518,6 +524,8 @@ public class AgregarPartida extends javax.swing.JFrame {
                 this.setVisible(false);
                 this.dispose();
                 plan.setUsar(false);
+                plan.setFecha("");
+                plan.setConcepto("");
             } catch (SQLException ex) {
                 Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(rootPane, "Revisa los datos ingresados!");
@@ -576,48 +584,6 @@ public class AgregarPartida extends javax.swing.JFrame {
     private void jSpinner1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSpinner1StateChanged
         cargarNPartida();
     }//GEN-LAST:event_jSpinner1StateChanged
-
-    private void cbxListaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxListaItemStateChanged
-        if (evt.getStateChange() == ItemEvent.SELECTED) {
-            //System.out.println(cbxLista.getSelectedItem().toString());
-            if (!cbxLista.getSelectedItem().toString().isEmpty()) {
-                try {
-                    String cuenta = "";
-                    String cod = "";
-                    char c;
-                    String combo = cbxLista.getSelectedItem().toString();
-                    for (int i = 0; i < cbxLista.getSelectedItem().toString().length(); i++) {
-                        c = combo.charAt(i);
-                        if (Character.isLetter(c)) {
-                            cuenta += String.valueOf(c);
-                        } else if (c == ' ') {
-                            cuenta += String.valueOf(c);
-                        } else {
-                            cod += String.valueOf(c);
-                        }
-
-                    }
-                    // cuenta cambia el item
-                    //vamos a ver si la cuenta seleccionada en el item tiene una plantilla
-                    Conexion con = new Conexion();
-                    ResultSet rs = con.Consulta("SELECT `IdPlantilla`, `NombrePlantilla`, `CuentaDefault`, `TipoIVA` FROM `plantilla` WHERE `CuentaDefault` = '" + cod
-                            + "'", con.getConexion()
-                    );
-
-                    if (rs.next()) {
-                        if (cbxLista.getSelectedItem().toString().equals(rs.getString("NombrePlantilla") + rs.getString("CuentaDefault"))) {
-                            JOptionPane.showMessageDialog(null, "le mostramos la plantilla");
-                        }
-                    }
-
-                    con.close();
-                    rs.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(AgregarPartida.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }//GEN-LAST:event_cbxListaItemStateChanged
 
     private void cbxPlantillasItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbxPlantillasItemStateChanged
         // COMBOBOX PLANTILLAS
@@ -782,6 +748,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                 }
 
                 if (btn_debe.isSelected()) {
+                    
                     if (btnMasIVA.isSelected()) {
 
                         if (btnDFI.isSelected()) { //en caso de que halla debito Fiscal
@@ -821,7 +788,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                             }
                             //agregamos la cuenta objetivo MAS el respectivo Credito
                             _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, txtSaldo.getText(), "0"});
-                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "110601", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), "0"});
+                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "110601", "Credito Fiscal IVA", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13)), ""});
                         }
 
                     } else if (btnExento.isSelected()) { //Si esta exento de iva (por defecto) solo añadimos la cuenta objetivo
@@ -839,7 +806,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                             }
 
                         }
-                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), "0"});
+                        _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()))), ""});
 
                     } else if (btnIncluido.isSelected()) { //Para iva INcluido
 
@@ -859,7 +826,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
                             }
                             //Exluimos del saldo lo que va hacia el IVA y lo que va hacia la cuenta objetivo
-                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), "0"});
+                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
                             _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "210702", "Debito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), "0"});
 
                         } else if (btnCFI.isSelected()) {
@@ -877,8 +844,8 @@ public class AgregarPartida extends javax.swing.JFrame {
                                 }
 
                             }
-                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), "0"});
-                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "110601", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), "0"});
+                            _Modelo.insertRow(this.UltimaDebe, new Object[]{"", cod, cuenta, String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13))), ""});
+                            _Modelo.insertRow(this.UltimaDebe + 1, new Object[]{"", "110601", "Credito Fiscal IVA", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13)), ""});
                         }
                     }
 
@@ -900,7 +867,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
                             }
                             _Modelo.addRow(new Object[]{"", cod, cuenta, "0", txtSaldo.getText()});
-                            _Modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
+                            _Modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
                         } else if (btnCFI.isSelected()) {
                             cuenta = "";
                             cod = "";
@@ -917,7 +884,7 @@ public class AgregarPartida extends javax.swing.JFrame {
 
                             }
                             _Modelo.addRow(new Object[]{"", cod, cuenta, "0", txtSaldo.getText()});
-                            _Modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
+                            _Modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText()) * 0.13))});
                         }
                     } else if (btnExento.isSelected()) {
                         cuenta = "";
@@ -934,7 +901,7 @@ public class AgregarPartida extends javax.swing.JFrame {
                             }
 
                         }
-                        _Modelo.addRow(new Object[]{"", cod, cuenta, "0", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText())))});
+                        _Modelo.addRow(new Object[]{"", cod, cuenta, "", String.valueOf(formato.format(Double.parseDouble(txtSaldo.getText())))});
                     } else if (btnIncluido.isSelected()) {
                         if (btnDFI.isSelected()) {
                             cuenta = "";
@@ -951,8 +918,8 @@ public class AgregarPartida extends javax.swing.JFrame {
                                 }
 
                             }
-                            _Modelo.addRow(new Object[]{"", cod, cuenta, "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
-                            _Modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
+                            _Modelo.addRow(new Object[]{"", cod, cuenta, "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
+                            _Modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
                         } else if (btnCFI.isSelected()) {
                             cuenta = "";
                             cod = "";
@@ -968,8 +935,8 @@ public class AgregarPartida extends javax.swing.JFrame {
                                 }
 
                             }
-                            _Modelo.addRow(new Object[]{"", cod, cuenta, "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
-                            _Modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
+                            _Modelo.addRow(new Object[]{"", cod, cuenta, "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13)))});
+                            _Modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "", String.valueOf(formato.format((Double.parseDouble(txtSaldo.getText()) / 1.13) * 0.13))});
                         }
                     }
                 }
@@ -1209,9 +1176,9 @@ public class AgregarPartida extends javax.swing.JFrame {
 
             Filas = tablePartidaPreview.getSelectedRows();
 
-            isConcepto = _Modelo.getValueAt(Filas[Filas.length - 1], 1).toString();//tomamos el ultimo valor de las filas seleccionadas
+            isConcepto = _Modelo.getValueAt(Filas[Filas.length - 1], 2).toString();//tomamos el ultimo valor de las filas seleccionadas
 
-            isPartida = _Modelo.getValueAt(Filas[0], 1).toString(); //tomamos el primer valor de las filas seleccionadas
+            isPartida = _Modelo.getValueAt(Filas[0], 2).toString(); //tomamos el primer valor de las filas seleccionadas
 
             if (isConcepto.equals(txtConcepto.getText()) || isPartida.equals("Partida " + txtNPartida.getText())) {
                 return exito;
@@ -1282,9 +1249,9 @@ public class AgregarPartida extends javax.swing.JFrame {
             if (plan.getBotonIVA().equals("EXCENTO")) {
                 //poner los saldos
                 if (tabla[i][2].equals("$")) {
-                    modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
+                    modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), ""});
                 } else if (tabla[i][3].equals("$")) {
-                    modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "0", plan.getSaldo()});
+                    modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", plan.getSaldo()});
                 }
             } else if (plan.getBotonIVA().equals("MAS")) {//mas iva
                 //ver la cuenta default porque debajo de esta ira el respectivo iva
@@ -1292,28 +1259,28 @@ public class AgregarPartida extends javax.swing.JFrame {
                     if (plan.getTipoIVA().equals("Debito")) {
                         //poner los saldos
                         if (tabla[i][2].equals("$")) {
-                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
-                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", iva, "0"});
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), ""});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", iva, ""});
                         } else if (tabla[i][3].equals("$")) {
                             modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", plan.getSaldo()});
-                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", iva});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "", iva});
                         }
                     } else if (plan.getTipoIVA().equals("Credito")) {
                         //poner los saldos
                         if (tabla[i][2].equals("$")) {
-                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
-                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", iva, "0"});
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), ""});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", iva, ""});
                         } else if (tabla[i][3].equals("$")) {
                             modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", plan.getSaldo()});
-                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", iva});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "", iva});
                         }
                     }
                 } else {
                     //poner los saldos
                     if (tabla[i][2].equals("$")) {
-                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], masIva, "0"});
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], masIva, ""});
                     } else if (tabla[i][3].equals("$")) {
-                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "0", masIva});
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", masIva});
                     }
                 }
 
@@ -1323,28 +1290,28 @@ public class AgregarPartida extends javax.swing.JFrame {
                     if (plan.getTipoIVA().equals("Debito")) {
                         //poner los saldos
                         if (tabla[i][2].equals("$")) {
-                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], sinIva, "0"});
-                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", iva, "0"});
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], sinIva, ""});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", iva, ""});
                         } else if (tabla[i][3].equals("$")) {
                             modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", sinIva});
-                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "0", iva});
+                            modelo.addRow(new Object[]{"", "210702", "Debito Fiscal IVA", "", iva});
                         }
                     } else if (plan.getTipoIVA().equals("Credito")) {
                         //poner los saldos
                         if (tabla[i][2].equals("$")) {
-                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], sinIva, "0"});
-                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", iva, "0"});
+                            modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], sinIva, ""});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", iva, ""});
                         } else if (tabla[i][3].equals("$")) {
                             modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", sinIva});
-                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "0", iva});
+                            modelo.addRow(new Object[]{"", "110601", "Credito Fiscal IVA", "", iva});
                         }
                     }
                 } else {
                     //poner los saldos
                     if (tabla[i][2].equals("$")) {
-                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), "0"});
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], plan.getSaldo(), ""});
                     } else if (tabla[i][3].equals("$")) {
-                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "0", plan.getSaldo()});
+                        modelo.addRow(new Object[]{"", tabla[i][0], tabla[i][1], "", plan.getSaldo()});
                     }
                 }
             }
